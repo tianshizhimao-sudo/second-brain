@@ -1153,13 +1153,16 @@ async function submitForm() {
   }
 
   btn.disabled = false; btn.textContent = editingId ? 'Update' : 'Save';
-  if (res?.success) {
+  console.log('API response:', JSON.stringify(res));
+  if (res?.success || res?.result === 'success') {
     showToast(editingId ? 'Updated!' : 'Added!');
     closeForm();
-    await new Promise(r => setTimeout(r, 1500));
-    loadTabData(currentTab, true);
+    showToast('⏳ Syncing...');
+    await new Promise(r => setTimeout(r, 2000));
+    await loadTabData(currentTab, true);
+    showToast('✅ Done!');
   } else {
-    showToast('Failed to save: ' + JSON.stringify(res), 'error');
+    showToast('Failed: ' + JSON.stringify(res), 'error');
   }
 }
 
@@ -1167,7 +1170,7 @@ async function submitForm() {
 async function quickWorkout(type, label) {
   const data = { id: genId(), date: new Date().toISOString().slice(0,10), type, exercise: label, sets:'', reps:'', weight:'', duration:'', notes:'Quick check-in' };
   const res = await API.post('append', 'Fitness', data);
-  if (res?.success) { showToast('💪 ' + label + ' logged!'); loadTabData('fitness', true); }
+  if (res?.success || res?.result === 'success') { showToast('💪 ' + label + ' logged!'); await new Promise(r => setTimeout(r, 2000)); loadTabData('fitness', true); }
 }
 
 // === Data Loading ===
@@ -1201,12 +1204,11 @@ async function toggleTodo(id, currentStatus) {
 
 async function refreshAll() {
   const btn = document.querySelector('.refresh-btn');
-  btn.style.animation = 'spin .8s linear';
-  showToast('Refreshing...');
+  btn.style.animation = 'spin .8s linear infinite';
   DATA = {};
   await loadTabData(currentTab, true);
   btn.style.animation = '';
-  showToast('Refreshed!');
+  showToast('🔄 Refreshed!');
 }
 
 // === Fitness ===
