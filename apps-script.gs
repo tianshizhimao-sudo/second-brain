@@ -3,8 +3,8 @@
  * Deploy as Web App: Execute as Me, Access: Anyone
  */
 
-const API_KEY = 'sb-oney-2026';
-const SHEET_ID = '1fyAdMu8RwcIOXBGyUhK3qqS8r-IOFVRFUokRLLaT41I';
+var API_KEY = 'sb-oney-2026';
+var SHEET_ID = '1fyAdMu8RwcIOXBGyUhK3qqS8r-IOFVRFUokRLLaT41I';
 
 function doGet(e) {
   if (e.parameter.key !== API_KEY) return jsonResponse({ error: 'Unauthorized' }, 401);
