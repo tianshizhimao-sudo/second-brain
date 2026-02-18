@@ -91,7 +91,24 @@ a{color:var(--green);text-decoration:none}
 .todo:last-child{border:none}
 .todo .check{color:var(--muted);font-size:16px;flex-shrink:0;margin-top:1px}
 .todo .check.done{color:var(--green)}
-.todo .text{font-size:13px}
+.todo .text{font-size:13px;flex:1}
+.todo .todo-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:2px 6px;opacity:0.5;transition:.2s}
+.todo .todo-del:hover{opacity:1;color:var(--red)}
+
+/* Schedule */
+.schedule-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+.schedule-item:last-child{border:none}
+.schedule-item .schedule-time{color:var(--green);font-weight:600;min-width:50px;font-size:13px}
+.schedule-item .schedule-title{flex:1}
+.schedule-item.highlight{background:rgba(46,204,133,.08);border-radius:8px;padding:8px 10px;margin:-2px -10px}
+.schedule-item.past .schedule-time{color:var(--muted);text-decoration:line-through}
+.schedule-item.past .schedule-title{color:var(--muted)}
+
+/* Refresh button */
+.refresh-btn{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 8px;transition:.3s}
+.refresh-btn:hover{color:var(--green)}
+.refresh-btn.spinning{animation:spin .8s linear}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
 /* Memory */
 .memory-section{margin-bottom:24px}
@@ -355,6 +372,7 @@ a{color:var(--green);text-decoration:none}
     <input type="text" id="searchInput" placeholder="Search everything...">
     <div class="search-results" id="searchResults"></div>
   </div>
+  <button class="refresh-btn" onclick="refreshAll()" title="Refresh data">🔄</button>
   <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
 </div>
 
@@ -417,12 +435,12 @@ a{color:var(--green);text-decoration:none}
   <div class="section-title">⏳ Countdowns</div>
   <div class="card" style="margin-bottom:16px" id="countdowns"></div>
 
-  <div class="section-title">📊 Quick Stats</div>
-  <div class="grid grid-4" style="margin-bottom:16px">
-    <div class="card stat"><div class="num">5</div><div class="label">Products</div></div>
-    <div class="card stat"><div class="num">2</div><div class="label">Skills Published</div></div>
-    <div class="card stat"><div class="num">2</div><div class="label">ClawHub Releases</div></div>
-    <div class="card stat"><div class="num" style="color:var(--green)">✓</div><div class="label">Sites Online</div></div>
+  <div class="section-title">📅 Today's Schedule</div>
+  <div class="card" style="margin-bottom:16px" id="scheduleContainer">
+    <div class="schedule-item past"><span class="schedule-time">10:30</span><span class="schedule-title">🌿 恢复休息 1</span></div>
+    <div class="schedule-item past"><span class="schedule-time">14:30</span><span class="schedule-title">🌿 恢复休息 2</span></div>
+    <div class="schedule-item past"><span class="schedule-time">16:20</span><span class="schedule-title">🌿 恢复休息 3</span></div>
+    <div class="schedule-item highlight"><span class="schedule-time">21:30</span><span class="schedule-title">🏋️ PT Andy</span></div>
   </div>
 
   <div class="section-title">🕐 Recent Activity</div>
@@ -823,7 +841,7 @@ let calMonth = new Date().getMonth();
 let calYear = new Date().getFullYear();
 
 // Data caches
-const DATA = {};
+let DATA = {};
 
 // === Tab switching ===
 function switchTab(id, el) {
@@ -909,7 +927,7 @@ async function confirmDelete() {
   if (!deleteId || !deleteSheet) return;
   const res = await API.post('delete', deleteSheet, null, deleteId);
   closeDeleteModal();
-  if (res && res.success) { showToast('已删除'); loadTabData(currentTab, true); }
+  if (res && res.success) { showToast('已删除'); await new Promise(r => setTimeout(r, 1500)); loadTabData(currentTab, true); }
   else showToast('Delete failed', 'error');
 }
 
@@ -1136,9 +1154,10 @@ async function submitForm() {
   if (res?.success) {
     showToast(editingId ? 'Updated!' : 'Added!');
     closeForm();
+    await new Promise(r => setTimeout(r, 1500));
     loadTabData(currentTab, true);
   } else {
-    showToast('Failed to save', 'error');
+    showToast('Failed to save: ' + JSON.stringify(res), 'error');
   }
 }
 
@@ -1167,8 +1186,25 @@ async function loadTodos() {
   const data = await API.get('Todos');
   if (!data?.rows?.length) return;
   document.getElementById('todosContainer').innerHTML = data.rows.map(r =>
-    `<div class="todo"><span class="check ${r.status==='done'?'done':''}">${r.status==='done'?'✓':'○'}</span><div class="text">${r.text}</div></div>`
+    `<div class="todo"><span class="check ${r.status==='done'?'done':''}" onclick="toggleTodo('${r.id}','${r.status}')">${r.status==='done'?'✓':'○'}</span><div class="text">${r.text}</div><button class="todo-del" onclick="openDeleteModal('${r.id}','Todos')" title="Delete">🗑️</button></div>`
   ).join('');
+}
+
+async function toggleTodo(id, currentStatus) {
+  const newStatus = currentStatus === 'done' ? 'pending' : 'done';
+  await API.post('update', 'Todos', { status: newStatus }, id);
+  await new Promise(r => setTimeout(r, 1000));
+  loadTodos();
+}
+
+async function refreshAll() {
+  const btn = document.querySelector('.refresh-btn');
+  btn.style.animation = 'spin .8s linear';
+  showToast('Refreshing...');
+  DATA = {};
+  await loadTabData(currentTab, true);
+  btn.style.animation = '';
+  showToast('Refreshed!');
 }
 
 // === Fitness ===
