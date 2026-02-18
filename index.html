@@ -168,6 +168,48 @@ a{color:var(--green);text-decoration:none}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* Bottom Sheet */
+.bottom-sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;opacity:0;pointer-events:none;transition:opacity .3s}
+.bottom-sheet-overlay.active{opacity:1;pointer-events:auto}
+.bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-radius:16px 16px 0 0;z-index:501;transform:translateY(100%);transition:transform .3s ease;max-height:85vh;overflow-y:auto;padding:20px;padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.bottom-sheet.active{transform:translateY(0)}
+.bottom-sheet .handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.bottom-sheet h3{font-size:18px;margin-bottom:16px;text-align:center}
+.bottom-sheet label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px;margin-top:12px}
+.bottom-sheet input,.bottom-sheet textarea,.bottom-sheet select{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:16px;outline:none;font-family:inherit}
+.bottom-sheet input:focus,.bottom-sheet textarea:focus{border-color:var(--green)}
+.bottom-sheet textarea{min-height:80px;resize:vertical}
+.bottom-sheet .submit-btn{width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,#2ECC85,#1FAD73);color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:20px;transition:.2s}
+.bottom-sheet .submit-btn:hover{transform:scale(1.02)}
+.bottom-sheet .submit-btn:disabled{opacity:.5;transform:none}
+
+/* Add Button */
+.add-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:8px;border:1px solid var(--green);background:transparent;color:var(--green);font-size:13px;cursor:pointer;transition:.2s;margin-left:auto}
+.add-btn:hover{background:rgba(46,204,133,.15)}
+
+/* QuickNotes */
+.quicknotes-wrap{margin-bottom:20px}
+.quicknotes-input{display:flex;gap:8px;margin-bottom:12px}
+.quicknotes-input input{flex:1;padding:12px 16px;border-radius:24px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:16px;outline:none}
+.quicknotes-input input:focus{border-color:var(--green)}
+.quicknotes-input button{padding:12px 20px;border-radius:24px;border:none;background:linear-gradient(135deg,#2ECC85,#1FAD73);color:#fff;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+.quicknotes-list{max-height:200px;overflow-y:auto}
+.qn-item{padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:13px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.qn-item.from-dong{background:rgba(46,204,133,.1);border-left:3px solid var(--green)}
+.qn-item.from-oney{background:rgba(107,76,154,.1);border-left:3px solid var(--purple)}
+.qn-item .qn-meta{font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* Toast */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 24px;font-size:14px;z-index:600;transition:transform .3s;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.toast.success{border-color:var(--green)}
+.toast.error{border-color:var(--red)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Skeleton */
+.skeleton{background:linear-gradient(90deg,var(--card) 25%,var(--border) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;height:20px;margin-bottom:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
 /* Lock screen */
 .lock-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
 .lock-screen.hidden{display:none}
@@ -197,6 +239,7 @@ a{color:var(--green);text-decoration:none}
   <div class="lock-hint">Dong & Oney's private space 🔒</div>
 </div>
 
+<script src="config.js"></script>
 <script>
 (function(){
   const HASH='a]oZ9k2x';// obfuscated check
@@ -265,6 +308,18 @@ a{color:var(--green);text-decoration:none}
 
 <!-- DASHBOARD -->
 <div class="tab-content active" id="tab-dashboard">
+  <div class="section-title">💬 Quick Notes</div>
+  <div class="card quicknotes-wrap" style="margin-bottom:16px">
+    <div class="quicknotes-input">
+      <input type="text" id="qnInput" placeholder="Tell Oney something..." onkeydown="if(event.key==='Enter')sendQuickNote()">
+      <button onclick="sendQuickNote()">Send 📨</button>
+    </div>
+    <div class="quicknotes-list" id="qnList">
+      <div class="skeleton" style="width:80%"></div>
+      <div class="skeleton" style="width:60%"></div>
+    </div>
+  </div>
+
   <div class="section-title">📅 Today</div>
   <div class="card" style="margin-bottom:16px">
     <div style="font-size:24px;font-weight:700" id="todayDate"></div>
@@ -296,8 +351,8 @@ a{color:var(--green);text-decoration:none}
     <div class="activity-item"><div class="date">2026-02-15</div><div class="desc">Full SEO audit + fixes: 14 pages OG tags, JSON-LD, PNG→WebP compression</div></div>
   </div>
 
-  <div class="section-title">📝 Action Items</div>
-  <div class="card">
+  <div class="section-title">📝 Action Items <button class="add-btn" onclick="openForm('todo')">➕ Add</button></div>
+  <div class="card" id="todosContainer">
     <div class="todo"><span class="check">○</span><div class="text">Connective Rafael — confirm commission split, trail ownership, commercial panel, clawback</div></div>
     <div class="todo"><span class="check">○</span><div class="text">Cert IV — send RPL email to Stuart (Kaplan $380)</div></div>
     <div class="todo"><span class="check">○</span><div class="text">Oney Analyse — decide deployment (tools sub-path vs standalone repo)</div></div>
@@ -312,7 +367,7 @@ a{color:var(--green);text-decoration:none}
 
 <!-- MEMORY -->
 <div class="tab-content" id="tab-memory">
-  <div class="section-title">🧠 Long-Term Memory</div>
+  <div class="section-title">🧠 Long-Term Memory <button class="add-btn" onclick="openForm('memory')">➕ Add</button></div>
   <div class="memory-section">
     <div class="memory-entry" onclick="this.classList.toggle('expanded')">
       <div class="meta"><span class="tag">Strategy</span><span class="date-tag">Current</span></div>
@@ -407,6 +462,7 @@ a{color:var(--green);text-decoration:none}
 
 <!-- RELATIONSHIPS -->
 <div class="tab-content" id="tab-relationships">
+  <div class="section-title">👥 Contacts <button class="add-btn" onclick="openForm('contact')">➕ Add</button></div>
   <div class="section-title">👨‍👩‍👧 Family</div>
   <div class="contact-card">
     <span class="badge badge-family">Family</span>
@@ -545,7 +601,7 @@ a{color:var(--green);text-decoration:none}
 
 <!-- KNOWLEDGE -->
 <div class="tab-content" id="tab-knowledge">
-  <div class="section-title">📖 Industry Terms</div>
+  <div class="section-title">📖 Industry Terms <button class="add-btn" onclick="openForm('knowledge')">➕ Add</button></div>
   <div class="card" style="margin-bottom:16px">
     <div class="term"><div class="abbr">LVR</div><div class="def">Loan-to-Value Ratio — loan amount as % of property value. Big 4 max ~60% for commercial.</div></div>
     <div class="term"><div class="abbr">LMI</div><div class="def">Lenders Mortgage Insurance — required when LVR exceeds lender threshold (usually >80% resi).</div></div>
@@ -711,6 +767,200 @@ document.addEventListener('click', e => { if (!e.target.closest('.search-wrap'))
 updateDate();
 updateCountdowns();
 setInterval(updateDate, 60000);
+</script>
+
+<!-- Bottom Sheet Overlay -->
+<div class="bottom-sheet-overlay" id="bsOverlay" onclick="closeForm()"></div>
+<div class="bottom-sheet" id="bsSheet">
+  <div class="handle"></div>
+  <h3 id="bsTitle"></h3>
+  <div id="bsFields"></div>
+  <button class="submit-btn" id="bsSubmit" onclick="submitForm()">Save</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// === Google Sheets API Layer ===
+const API = {
+  async get(sheet) {
+    if (!SB_CONFIG.API_URL) return null;
+    try {
+      const r = await fetch(`${SB_CONFIG.API_URL}?key=${SB_CONFIG.API_KEY}&sheet=${sheet}`);
+      return await r.json();
+    } catch(e) { console.warn('API get failed:', e); return null; }
+  },
+  async post(action, sheet, data, id) {
+    if (!SB_CONFIG.API_URL) { showToast('API not configured — see DEPLOY.md', 'error'); return null; }
+    try {
+      const r = await fetch(SB_CONFIG.API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' }, // Apps Script quirk
+        body: JSON.stringify({ key: SB_CONFIG.API_KEY, action, sheet, data, id })
+      });
+      return await r.json();
+    } catch(e) { showToast('Failed: ' + e.message, 'error'); return null; }
+  }
+};
+
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+// === Toast ===
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type === 'success' ? '✅ ' : '❌ ') + msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// === QuickNotes ===
+async function loadQuickNotes() {
+  const data = await API.get('QuickNotes');
+  const list = document.getElementById('qnList');
+  if (!data || !data.rows || !data.rows.length) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">No notes yet. Say something!</div>';
+    return;
+  }
+  list.innerHTML = data.rows.slice(-10).reverse().map(r =>
+    `<div class="qn-item from-${(r.from||'dong').toLowerCase()}">
+      <span>${r.note}</span>
+      <span class="qn-meta">${r.from || ''} · ${(r.timestamp||'').slice(0,16)}</span>
+    </div>`
+  ).join('');
+}
+
+async function sendQuickNote() {
+  const input = document.getElementById('qnInput');
+  const note = input.value.trim();
+  if (!note) return;
+  input.value = '';
+  const data = { id: genId(), timestamp: new Date().toISOString(), note, from: 'Dong' };
+  const res = await API.post('append', 'QuickNotes', data);
+  if (res && res.success) { showToast('Note sent!'); loadQuickNotes(); }
+}
+
+// === Bottom Sheet Forms ===
+let currentFormType = '';
+const FORMS = {
+  memory: {
+    title: '🧠 Add Memory',
+    fields: [
+      { name: 'date', label: 'Date', type: 'date', default: () => new Date().toISOString().slice(0,10) },
+      { name: 'category', label: 'Category', type: 'select', options: ['Strategy','Daily','Event','Family','Products','Security'] },
+      { name: 'title', label: 'Title', type: 'text' },
+      { name: 'content', label: 'Content', type: 'textarea' },
+      { name: 'tags', label: 'Tags (comma separated)', type: 'text' }
+    ],
+    sheet: 'Memory'
+  },
+  contact: {
+    title: '👥 Add Contact',
+    fields: [
+      { name: 'name', label: 'Name', type: 'text' },
+      { name: 'role', label: 'Role / Title', type: 'text' },
+      { name: 'category', label: 'Category', type: 'select', options: ['Family','Industry','NAB','Aggregator','Client','Other'] },
+      { name: 'lastContact', label: 'Last Contact', type: 'date' },
+      { name: 'birthday', label: 'Birthday', type: 'date' },
+      { name: 'notes', label: 'Notes', type: 'textarea' }
+    ],
+    sheet: 'Contacts'
+  },
+  todo: {
+    title: '📝 Add Todo',
+    fields: [
+      { name: 'text', label: 'Task', type: 'text' },
+      { name: 'priority', label: 'Priority', type: 'select', options: ['high','medium','low'] }
+    ],
+    sheet: 'Todos'
+  },
+  knowledge: {
+    title: '📚 Add Knowledge',
+    fields: [
+      { name: 'category', label: 'Category', type: 'select', options: ['Industry Terms','Lender Notes','Competitive Intel','Documents','Agent'] },
+      { name: 'title', label: 'Title', type: 'text' },
+      { name: 'content', label: 'Content', type: 'textarea' },
+      { name: 'tags', label: 'Tags', type: 'text' }
+    ],
+    sheet: 'Knowledge'
+  }
+};
+
+function openForm(type) {
+  currentFormType = type;
+  const form = FORMS[type];
+  document.getElementById('bsTitle').textContent = form.title;
+  document.getElementById('bsFields').innerHTML = form.fields.map(f => {
+    const val = f.default ? f.default() : '';
+    if (f.type === 'textarea') return `<label>${f.label}</label><textarea id="bs_${f.name}" placeholder="${f.label}">${val}</textarea>`;
+    if (f.type === 'select') return `<label>${f.label}</label><select id="bs_${f.name}">${f.options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
+    return `<label>${f.label}</label><input type="${f.type}" id="bs_${f.name}" placeholder="${f.label}" value="${val}">`;
+  }).join('');
+  document.getElementById('bsOverlay').classList.add('active');
+  document.getElementById('bsSheet').classList.add('active');
+}
+
+function closeForm() {
+  document.getElementById('bsOverlay').classList.remove('active');
+  document.getElementById('bsSheet').classList.remove('active');
+}
+
+async function submitForm() {
+  const form = FORMS[currentFormType];
+  const btn = document.getElementById('bsSubmit');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  const data = { id: genId() };
+  form.fields.forEach(f => {
+    data[f.name] = document.getElementById('bs_' + f.name).value;
+  });
+
+  // Extra fields
+  if (currentFormType === 'todo') { data.status = 'pending'; data.created = new Date().toISOString().slice(0,10); data.completed = ''; }
+  if (currentFormType === 'contact') { data.nextContact = ''; }
+
+  const res = await API.post('append', form.sheet, data);
+  btn.disabled = false; btn.textContent = 'Save';
+
+  if (res && res.success) {
+    showToast('Added!');
+    closeForm();
+    loadAllData();
+  } else if (!SB_CONFIG.API_URL) {
+    showToast('API not configured yet — deploy Apps Script first!', 'error');
+  }
+}
+
+// === Load Data from Sheets ===
+async function loadTodos() {
+  const data = await API.get('Todos');
+  if (!data || !data.rows || !data.rows.length) return; // keep hardcoded fallback
+  const container = document.getElementById('todosContainer');
+  const existing = container.innerHTML; // fallback
+  const html = data.rows.map(r =>
+    `<div class="todo"><span class="check ${r.status==='done'?'done':''}">` +
+    `${r.status==='done'?'✓':'○'}</span><div class="text">${r.text}</div></div>`
+  ).join('');
+  container.innerHTML = html || existing;
+}
+
+async function loadAllData() {
+  loadQuickNotes();
+  loadTodos();
+}
+
+// Init data loading
+if (typeof SB_CONFIG !== 'undefined' && SB_CONFIG.API_URL) {
+  document.addEventListener('DOMContentLoaded', loadAllData);
+  // Also try if DOM already loaded
+  if (document.readyState !== 'loading') loadAllData();
+} else {
+  // No API configured — clear skeleton
+  document.addEventListener('DOMContentLoaded', () => {
+    const qnList = document.getElementById('qnList');
+    if (qnList) qnList.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">📡 Connect Google Sheets to enable — see DEPLOY.md</div>';
+  });
+}
 </script>
 </body>
 </html>
