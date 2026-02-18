@@ -380,7 +380,7 @@ a{color:var(--green);text-decoration:none}
 <nav class="tab-bar">
   <button class="tab-bar-item active" onclick="switchTab('dashboard',this)"><span class="tab-icon">📋</span>Home</button>
   <button class="tab-bar-item" onclick="switchTab('memory',this)"><span class="tab-icon">🧠</span>Memory</button>
-  <button class="tab-bar-item" onclick="switchTab('fitness',this)"><span class="tab-icon">💪</span>Fitness</button>
+  <button class="tab-bar-item" onclick="switchTab('ideas',this)"><span class="tab-icon">💡</span>Ideas</button>
   <button class="tab-bar-item" onclick="switchTab('olivia',this)"><span class="tab-icon">❤️</span>Olivia</button>
   <button class="tab-bar-item" onclick="toggleMore(event)"><span class="tab-icon">⋯</span>More</button>
 </nav>
@@ -394,7 +394,7 @@ a{color:var(--green);text-decoration:none}
   <div class="more-menu-item" onclick="switchTab('finance',this);closeMore()"><span class="mm-icon">💰</span>Finance</div>
   <div class="more-menu-item" onclick="switchTab('reading',this);closeMore()"><span class="mm-icon">📖</span>Reading</div>
   <div class="more-menu-item" onclick="switchTab('goals',this);closeMore()"><span class="mm-icon">🎯</span>Goals</div>
-  <div class="more-menu-item" onclick="switchTab('ideas',this);closeMore()"><span class="mm-icon">💡</span>Ideas</div>
+  <div class="more-menu-item" onclick="switchTab('fitness',this);closeMore()"><span class="mm-icon">💪</span>Fitness</div>
 </div>
 
 <!-- FAB -->
@@ -432,9 +432,6 @@ a{color:var(--green);text-decoration:none}
     <div style="color:var(--muted);margin-top:4px" id="todayGreeting"></div>
   </div>
 
-  <div class="section-title">⏳ Countdowns</div>
-  <div class="card" style="margin-bottom:16px" id="countdowns"></div>
-
   <div class="section-title">📅 Today's Schedule</div>
   <div class="card" style="margin-bottom:16px" id="scheduleContainer">
     <div class="schedule-item past"><span class="schedule-time">10:30</span><span class="schedule-title">🌿 恢复休息 1</span></div>
@@ -442,6 +439,9 @@ a{color:var(--green);text-decoration:none}
     <div class="schedule-item past"><span class="schedule-time">16:20</span><span class="schedule-title">🌿 恢复休息 3</span></div>
     <div class="schedule-item highlight"><span class="schedule-time">21:30</span><span class="schedule-title">🏋️ PT Andy</span></div>
   </div>
+
+  <div class="section-title">⏳ Countdowns</div>
+  <div class="card" style="margin-bottom:16px" id="countdowns"></div>
 
   <div class="section-title">🕐 Recent Activity</div>
   <div class="card" style="margin-bottom:16px" id="recentActivity">
@@ -907,11 +907,13 @@ const API = {
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 // === Toast ===
+let _toastTimer;
 function showToast(msg, type='success') {
   const t = document.getElementById('toast');
   t.textContent = (type === 'success' ? '✅ ' : '❌ ') + msg;
   t.className = 'toast ' + type + ' show';
-  setTimeout(() => t.classList.remove('show'), 3000);
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 // === Delete Modal ===
