@@ -11,9 +11,9 @@
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiT25leSBTZWNvbmQgQnJhaW4iLCJzaG9ydF9uYW1lIjoiU2Vjb25kIEJyYWluIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwYTBhMGEiLCJ0aGVtZV9jb2xvciI6IiMwYTBhMGEifQ==">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0a;--card:#1a1a1a;--border:#2a2a2a;--text:#e0e0e0;--muted:#888;--green:#2ECC85;--green2:#1FAD73;--purple:#6B4C9A;--purple-light:#9B59B6;--red:#e74c3c;--orange:#f39c12;--blue:#3498db}
+:root{--bg:#0a0a0a;--card:#1a1a1a;--border:#2a2a2a;--text:#e0e0e0;--muted:#888;--green:#2ECC85;--green2:#1FAD73;--purple:#6B4C9A;--purple-light:#9B59B6;--red:#e74c3c;--orange:#f39c12;--blue:#3498db;--pink:#ec4899}
 [data-theme="light"]{--bg:#f5f5f5;--card:#fff;--border:#ddd;--text:#222;--muted:#666}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:70px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px}
 a{color:var(--green);text-decoration:none}
 
 /* Header */
@@ -38,11 +38,19 @@ a{color:var(--green);text-decoration:none}
 /* Theme toggle */
 .theme-btn{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
 
-/* Nav */
-.nav{display:flex;justify-content:center;gap:4px;padding:8px 12px;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}
-.nav button{padding:8px 16px;border:none;border-radius:8px;background:transparent;color:var(--muted);font-size:13px;cursor:pointer;white-space:nowrap;transition:.2s}
-.nav button.active{background:rgba(46,204,133,.15);color:var(--green);font-weight:600}
-.nav button:hover{color:var(--text)}
+/* Bottom Tab Bar */
+.tab-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,0.98);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));z-index:100;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.tab-bar-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border:none;background:none;color:var(--muted);font-size:10px;cursor:pointer;transition:.2s;min-width:0;flex:1}
+.tab-bar-item .tab-icon{font-size:20px;line-height:1}
+.tab-bar-item.active{color:var(--green)}
+.tab-bar-item:hover{color:var(--text)}
+
+/* More menu */
+.more-menu{position:fixed;bottom:70px;right:8px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px;display:none;z-index:200;box-shadow:0 -4px 20px rgba(0,0,0,.4);min-width:160px}
+.more-menu.active{display:block}
+.more-menu-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--text)}
+.more-menu-item:hover{background:rgba(46,204,133,.1)}
+.more-menu-item .mm-icon{font-size:18px}
 
 /* Content */
 .tab-content{display:none;padding:20px;max-width:1200px;margin:0 auto;animation:fadeIn .3s}
@@ -140,30 +148,6 @@ a{color:var(--green);text-decoration:none}
 .competitor .cname{font-weight:600;font-size:14px}
 .competitor .cdesc{font-size:13px;color:var(--muted);margin-top:2px}
 
-/* Mobile */
-@media(max-width:768px){
-  .header{padding:8px 12px;padding-top:max(8px, env(safe-area-inset-top));gap:6px}
-  .header-left{gap:6px}
-  .header-left svg{width:28px;height:28px}
-  .header h1{font-size:14px}
-  .search-wrap{max-width:120px;margin:0 4px}
-  .search-wrap input{padding:6px 10px 6px 28px;font-size:13px}
-  .nav{gap:0;padding:4px 4px;flex-wrap:nowrap;justify-content:space-between}
-  .nav button{padding:6px 8px;font-size:11px;flex:1;text-align:center;min-width:0}
-  .tab-content{padding:12px}
-  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
-  .stat .num{font-size:22px}
-  .section-title{font-size:17px;margin:16px 0 12px}
-  .card{padding:14px}
-  .card h3{font-size:14px}
-}
-@media(max-width:380px){
-  .search-wrap{display:none}
-  .header{padding:6px 10px;padding-top:max(6px, env(safe-area-inset-top))}
-  .nav button{padding:5px 6px;font-size:10px}
-  .header h1{font-size:13px}
-}
-
 /* Scrollbar */
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -183,10 +167,16 @@ a{color:var(--green);text-decoration:none}
 .bottom-sheet .submit-btn{width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,#2ECC85,#1FAD73);color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:20px;transition:.2s}
 .bottom-sheet .submit-btn:hover{transform:scale(1.02)}
 .bottom-sheet .submit-btn:disabled{opacity:.5;transform:none}
+.bottom-sheet .btn-row{display:flex;gap:8px;margin-top:20px}
+.bottom-sheet .btn-row .submit-btn{flex:1;margin-top:0}
+.bottom-sheet .cancel-btn{width:100%;padding:14px;border:none;border-radius:10px;background:var(--border);color:var(--text);font-size:16px;font-weight:600;cursor:pointer;margin-top:8px}
 
-/* Add Button */
+/* Add/FAB Button */
 .add-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:8px;border:1px solid var(--green);background:transparent;color:var(--green);font-size:13px;cursor:pointer;transition:.2s;margin-left:auto}
 .add-btn:hover{background:rgba(46,204,133,.15)}
+.fab{position:fixed;bottom:80px;right:20px;width:56px;height:56px;border-radius:50%;border:none;background:linear-gradient(135deg,#2ECC85,#1FAD73);color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 16px rgba(46,204,133,.4);z-index:90;transition:.2s;display:none}
+.fab:hover{transform:scale(1.1)}
+.fab.visible{display:flex;align-items:center;justify-content:center}
 
 /* QuickNotes */
 .quicknotes-wrap{margin-bottom:20px}
@@ -225,6 +215,88 @@ a{color:var(--green);text-decoration:none}
 .lock-btn:hover{transform:scale(1.03)}
 .lock-hint{font-size:12px;color:var(--muted)}
 .lock-error{font-size:13px;color:var(--red);height:20px}
+
+/* Delete confirm modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;justify-content:center}
+.modal-overlay.active{opacity:1;pointer-events:auto}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:320px;width:90%;text-align:center}
+.modal h3{font-size:16px;margin-bottom:8px}
+.modal p{font-size:14px;color:var(--muted);margin-bottom:20px}
+.modal .modal-btns{display:flex;gap:8px}
+.modal .modal-btns button{flex:1;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer}
+.modal .btn-cancel{background:var(--border);color:var(--text)}
+.modal .btn-delete{background:var(--red);color:#fff}
+
+/* Record list items with edit/delete */
+.record-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;position:relative}
+.record-item .record-main{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.record-item .record-body{flex:1;min-width:0}
+.record-item .record-title{font-size:14px;font-weight:600}
+.record-item .record-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.record-item .record-meta{font-size:11px;color:var(--green);margin-top:4px}
+.record-actions{display:flex;gap:4px;flex-shrink:0}
+.record-actions button{width:30px;height:30px;border:none;border-radius:6px;background:transparent;color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.record-actions button:hover{background:var(--border);color:var(--text)}
+.record-actions .btn-del:hover{color:var(--red);background:rgba(231,76,60,.15)}
+
+/* Filter chips */
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.chip{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:.2s}
+.chip.active{background:rgba(46,204,133,.15);color:var(--green);border-color:var(--green)}
+
+/* Fitness calendar */
+.fit-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:16px}
+.fit-cal-header{text-align:center;font-size:10px;color:var(--muted);padding:4px}
+.fit-cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:12px;color:var(--muted);position:relative}
+.fit-cal-day.today{color:var(--text);font-weight:700}
+.fit-cal-day.has-workout::after{content:'';position:absolute;bottom:2px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.fit-cal-day.empty{opacity:0}
+.fit-cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.fit-cal-nav button{background:none;border:none;color:var(--green);font-size:18px;cursor:pointer;padding:4px 8px}
+.fit-cal-nav .cal-month{font-size:14px;font-weight:600}
+
+/* Quick workout buttons */
+.quick-workouts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.quick-workout-btn{padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.quick-workout-btn:hover{border-color:var(--green);background:rgba(46,204,133,.1)}
+
+/* Finance pie chart */
+.pie-container{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pie{width:120px;height:120px;border-radius:50%;position:relative;flex-shrink:0}
+.pie-legend{font-size:12px}
+.pie-legend-item{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.pie-legend-item .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* Olivia special */
+.olivia-countdown{background:linear-gradient(135deg,rgba(236,72,153,.1),rgba(107,76,154,.1));border:1px solid rgba(236,72,153,.2);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center}
+.olivia-countdown .big-num{font-size:36px;font-weight:800;color:var(--pink)}
+.olivia-countdown .cd-label{font-size:13px;color:var(--muted);margin-top:4px}
+.wishlist-item{padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.wishlist-item:last-child{border:none}
+
+/* Low stock warning */
+.low-stock{color:var(--red) !important;font-weight:600}
+
+/* Mobile */
+@media(max-width:768px){
+  .header{padding:8px 12px;padding-top:max(8px, env(safe-area-inset-top));gap:6px}
+  .header-left{gap:6px}
+  .header-left svg{width:28px;height:28px}
+  .header h1{font-size:14px}
+  .search-wrap{max-width:120px;margin:0 4px}
+  .search-wrap input{padding:6px 10px 6px 28px;font-size:13px}
+  .tab-content{padding:12px}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .stat .num{font-size:22px}
+  .section-title{font-size:17px;margin:16px 0 12px}
+  .card{padding:14px}
+  .card h3{font-size:14px}
+}
+@media(max-width:380px){
+  .search-wrap{display:none}
+  .header{padding:6px 10px;padding-top:max(6px, env(safe-area-inset-top))}
+  .header h1{font-size:13px}
+}
 </style>
 </head>
 <body>
@@ -242,7 +314,6 @@ a{color:var(--green);text-decoration:none}
 <script src="config.js"></script>
 <script>
 (function(){
-  const HASH='a]oZ9k2x';// obfuscated check
   function h(s){let r=0;for(let i=0;i<s.length;i++){r=((r<<5)-r)+s.charCodeAt(i);r|=0}return r}
   const CORRECT=411339417;
   window.unlock=function(){
@@ -264,28 +335,17 @@ a{color:var(--green);text-decoration:none}
 <div class="header">
   <div class="header-left">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36">
-      <defs>
-        <linearGradient id="brainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#2ECC85"/>
-          <stop offset="100%" style="stop-color:#6B4C9A"/>
-        </linearGradient>
-      </defs>
-      <!-- cute brain shape -->
+      <defs><linearGradient id="brainGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2ECC85"/><stop offset="100%" style="stop-color:#6B4C9A"/></linearGradient></defs>
       <path d="M50 15 C35 15 25 25 25 38 C25 42 26 45 28 48 C22 52 18 58 18 65 C18 75 26 82 36 82 L64 82 C74 82 82 75 82 65 C82 58 78 52 72 48 C74 45 75 42 75 38 C75 25 65 15 50 15Z" fill="url(#brainGrad)" opacity="0.9"/>
-      <!-- brain center line -->
       <path d="M50 20 C50 20 50 78 50 78" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none"/>
-      <!-- left brain wrinkles -->
       <path d="M32 35 Q38 30 44 36" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" stroke-linecap="round"/>
       <path d="M28 50 Q35 45 42 52" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none" stroke-linecap="round"/>
       <path d="M30 65 Q37 60 44 66" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <!-- right brain wrinkles -->
       <path d="M56 36 Q62 30 68 35" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" stroke-linecap="round"/>
       <path d="M58 52 Q65 45 72 50" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none" stroke-linecap="round"/>
       <path d="M56 66 Q63 60 70 65" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <!-- sparkle eyes -->
       <circle cx="38" cy="42" r="2.5" fill="white" opacity="0.8"/>
       <circle cx="62" cy="42" r="2.5" fill="white" opacity="0.8"/>
-      <!-- cute smile -->
       <path d="M42 55 Q50 62 58 55" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
     </svg>
     <h1>🧠 <span>Second</span> Brain</h1>
@@ -298,15 +358,43 @@ a{color:var(--green);text-decoration:none}
   <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
 </div>
 
-<nav class="nav">
-  <button class="active" onclick="switchTab('dashboard')">📋 Dashboard</button>
-  <button onclick="switchTab('memory')">🧠 Memory</button>
-  <button onclick="switchTab('relationships')">👥 人脉</button>
-  <button onclick="switchTab('projects')">📂 Projects</button>
-  <button onclick="switchTab('knowledge')">📚 Knowledge</button>
+<!-- Bottom Tab Bar -->
+<nav class="tab-bar">
+  <button class="tab-bar-item active" onclick="switchTab('dashboard',this)"><span class="tab-icon">📋</span>Home</button>
+  <button class="tab-bar-item" onclick="switchTab('memory',this)"><span class="tab-icon">🧠</span>Memory</button>
+  <button class="tab-bar-item" onclick="switchTab('fitness',this)"><span class="tab-icon">💪</span>Fitness</button>
+  <button class="tab-bar-item" onclick="switchTab('olivia',this)"><span class="tab-icon">❤️</span>Olivia</button>
+  <button class="tab-bar-item" onclick="toggleMore(event)"><span class="tab-icon">⋯</span>More</button>
 </nav>
 
-<!-- DASHBOARD -->
+<!-- More menu -->
+<div class="more-menu" id="moreMenu">
+  <div class="more-menu-item" onclick="switchTab('relationships',this);closeMore()"><span class="mm-icon">👥</span>Contacts</div>
+  <div class="more-menu-item" onclick="switchTab('projects',this);closeMore()"><span class="mm-icon">📂</span>Projects</div>
+  <div class="more-menu-item" onclick="switchTab('knowledge',this);closeMore()"><span class="mm-icon">📚</span>Knowledge</div>
+  <div class="more-menu-item" onclick="switchTab('inventory',this);closeMore()"><span class="mm-icon">📦</span>Inventory</div>
+  <div class="more-menu-item" onclick="switchTab('finance',this);closeMore()"><span class="mm-icon">💰</span>Finance</div>
+  <div class="more-menu-item" onclick="switchTab('reading',this);closeMore()"><span class="mm-icon">📖</span>Reading</div>
+  <div class="more-menu-item" onclick="switchTab('goals',this);closeMore()"><span class="mm-icon">🎯</span>Goals</div>
+  <div class="more-menu-item" onclick="switchTab('ideas',this);closeMore()"><span class="mm-icon">💡</span>Ideas</div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="fabAction()">＋</button>
+
+<!-- Delete confirmation modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>确定删除？</h3>
+    <p>此操作无法撤销</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeDeleteModal()">取消</button>
+      <button class="btn-delete" onclick="confirmDelete()">删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DASHBOARD ========== -->
 <div class="tab-content active" id="tab-dashboard">
   <div class="section-title">💬 Quick Notes</div>
   <div class="card quicknotes-wrap" style="margin-bottom:16px">
@@ -347,8 +435,6 @@ a{color:var(--green);text-decoration:none}
     <div class="activity-item"><div class="date">2026-02-17</div><div class="desc">n8n Client Onboarding Workflow V2 deployed — Calendly→Sheets→Gmail→Telegram</div></div>
     <div class="activity-item"><div class="date">2026-02-16 (Mon)</div><div class="desc">OneyTrader: 18 strategies, 42 instances live on IBKR</div></div>
     <div class="activity-item"><div class="date">2026-02-16</div><div class="desc">除夕夜 🧧 — Business Model Canvas + Cold Start Plan completed</div></div>
-    <div class="activity-item"><div class="date">2026-02-15 (Sun)</div><div class="desc">Oney Security product repositioned — "Quickli = Serviceability, Oney = Security" 蓝海战略</div></div>
-    <div class="activity-item"><div class="date">2026-02-15</div><div class="desc">Full SEO audit + fixes: 14 pages OG tags, JSON-LD, PNG→WebP compression</div></div>
   </div>
 
   <div class="section-title">📝 Action Items <button class="add-btn" onclick="openForm('todo')">➕ Add</button></div>
@@ -358,14 +444,12 @@ a{color:var(--green);text-decoration:none}
     <div class="todo"><span class="check">○</span><div class="text">Oney Analyse — decide deployment (tools sub-path vs standalone repo)</div></div>
     <div class="todo"><span class="check">○</span><div class="text">Oney Security v1.1 — continue polishing, then deploy</div></div>
     <div class="todo"><span class="check">○</span><div class="text">Twenty CRM — migrate from Google Sheets</div></div>
-    <div class="todo"><span class="check">○</span><div class="text">LinkedIn content — review draft linkedin-001-deal-triage.md</div></div>
-    <div class="todo"><span class="check">○</span><div class="text">IBKR — upgrade to Margin account for FX trading</div></div>
     <div class="todo"><span class="check done">✓</span><div class="text">Humanizer pass — 22 changes across all site pages</div></div>
     <div class="todo"><span class="check done">✓</span><div class="text">Site review fixes — OG tags, canonical URLs, sitemap</div></div>
   </div>
 </div>
 
-<!-- MEMORY -->
+<!-- ========== MEMORY ========== -->
 <div class="tab-content" id="tab-memory">
   <div class="section-title">🧠 Long-Term Memory <button class="add-btn" onclick="openForm('memory')">➕ Add</button></div>
   <div class="memory-section">
@@ -377,22 +461,22 @@ a{color:var(--green);text-decoration:none}
     <div class="memory-entry" onclick="this.classList.toggle('expanded')">
       <div class="meta"><span class="tag purple">Operations</span><span class="date-tag">Always Active</span></div>
       <div class="title">⚡ 操作规则</div>
-      <div class="preview">日历: 悉尼时区 +11:00 | 工作时间 6am-9pm | Zoom 45min | Catch up 30min | In-person 1h | Gym 50min。邮件: 只发事实，无承诺，代表 Dong → 放草稿。邮箱: dong.m@ (需审批) | hello@ (BCC Dong) | support@ (直接回复)。记账: 公司/家庭各有 Google Sheet。健身打卡: 同步到 Sheet。Sub-Agent 派遣: "[Agent名] 已出动！🕵️"</div>
+      <div class="preview">日历: 悉尼时区 +11:00 | 工作时间 6am-9pm | Zoom 45min | Catch up 30min | In-person 1h | Gym 50min。邮件: 只发事实，无承诺，代表 Dong → 放草稿。邮箱: dong.m@ (需审批) | hello@ (BCC Dong) | support@ (直接回复)。</div>
     </div>
     <div class="memory-entry" onclick="this.classList.toggle('expanded')">
       <div class="meta"><span class="tag orange">Family</span><span class="date-tag">Personal</span></div>
       <div class="title">❤️ 家庭 & 个人</div>
-      <div class="preview">Olivia — 太太，结婚快10年 (纪念日 3月5日) | 亚甲炎康复中。Dong: 跑步品牌 Satisfy/Bandit | 足球/网球/AFL/NRL | 教育世家背景 — 分享知识是骨子里的。旅行: 🇸🇬 新加坡 4-5月 | 🇨🇳🇯🇵 6/12-6/30 已购票 | 6/17 Oli 生日在日本。</div>
+      <div class="preview">Olivia — 太太，结婚快10年 (纪念日 3月5日) | 亚甲炎康复中。Dong: 跑步品牌 Satisfy/Bandit | 足球/网球/AFL/NRL | 教育世家背景。旅行: 🇸🇬 新加坡 4-5月 | 🇨🇳🇯🇵 6/12-6/30 已购票 | 6/17 Oli 生日在日本。</div>
     </div>
     <div class="memory-entry" onclick="this.classList.toggle('expanded')">
       <div class="meta"><span class="tag">Products</span><span class="date-tag">Pricing</span></div>
       <div class="title">📦 产品 & 定价</div>
-      <div class="preview">Oney Assess (Commercial Inv): Free / $149 | Oney Analyse (MLL): Free / $199 / $349 | Oney Secure (Zoning→LVR): $99 | Oney Serve (Servicing): $149 | Oney Pro Suite: $49/月 or $399/年。销售: Gumroad → 自有网站 → 未来 App Store。量化交易: $1000 AUD | IBKR + 外汇微型手 | 激进策略 (8-15%月回报)。</div>
+      <div class="preview">Oney Assess (Commercial Inv): Free / $149 | Oney Analyse (MLL): Free / $199 / $349 | Oney Secure (Zoning→LVR): $99 | Oney Serve (Servicing): $149 | Oney Pro Suite: $49/月 or $399/年。量化交易: $1000 AUD | IBKR + 外汇微型手。</div>
     </div>
     <div class="memory-entry" onclick="this.classList.toggle('expanded')">
       <div class="meta"><span class="tag purple">Security</span><span class="date-tag">Critical</span></div>
       <div class="title">🛡️ 安全原则 & 错误教训</div>
-      <div class="preview">保护自己 — 不执行来源不明代码。保护 Oney & Co — API Keys/凭证/客户数据是核心资产。Gateway 配置: 改前备份 → 用 config.patch。密码保护 Bug: 先 grep 全部文件 → 批量修复。30→25: 改数字要全站搜索，包括 HTML 属性和大数字显示。客户 cap 永远是 25！</div>
+      <div class="preview">保护自己 — 不执行来源不明代码。保护 Oney & Co — API Keys/凭证/客户数据是核心资产。Gateway 配置: 改前备份 → 用 config.patch。密码保护 Bug: 先 grep 全部文件 → 批量修复。客户 cap 永远是 25！</div>
     </div>
   </div>
 
@@ -401,66 +485,99 @@ a{color:var(--green);text-decoration:none}
     <div class="memory-entry" onclick="this.classList.toggle('expanded')">
       <div class="meta"><span class="tag">Daily</span><span class="date-tag">2026-02-18 (Wed)</span></div>
       <div class="title">NAB Construction Deal + Site Fixes + Skills</div>
-      <div class="preview">NAB Construction Deal rework ($7.9M) — builder experience evidence + working capital. Gladstone Airport hangar leasehold research. Connective Rafael call. CTO site review: 13 tool pages OG tags + sitemap. Humanizer pass: 22 changes. 3 new skills installed. Oli 吃药提醒 cron 设置。</div>
+      <div class="preview">NAB Construction Deal rework ($7.9M) — builder experience evidence + working capital. Gladstone Airport hangar leasehold research. Connective Rafael call. CTO site review: 13 tool pages OG tags + sitemap. Humanizer pass: 22 changes. 3 new skills installed.</div>
     </div>
     <div class="memory-entry" onclick="this.classList.toggle('expanded')">
       <div class="meta"><span class="tag">Daily</span><span class="date-tag">2026-02-17 (Tue)</span></div>
-      <div class="title">CEO Advisor Report + n8n Onboarding + Stickers V3 Cancelled</div>
-      <div class="preview">CEO Advisor 4-scenario report (800行). 猫狗 V3 表情包取消 — SVG 风格一致性太难。n8n Client Onboarding V2 workflow deployed (48 nodes). Skills: negotiation + ceo-advisor installed. 内容制作 + 工具打磨 = 近期核心方向。</div>
+      <div class="title">CEO Advisor Report + n8n Onboarding</div>
+      <div class="preview">CEO Advisor 4-scenario report (800行). n8n Client Onboarding V2 workflow deployed (48 nodes). Skills: negotiation + ceo-advisor installed.</div>
     </div>
     <div class="memory-entry" onclick="this.classList.toggle('expanded')">
       <div class="meta"><span class="tag">Daily</span><span class="date-tag">2026-02-16 (Mon) 除夕</span></div>
-      <div class="title">OneyTrader 18 Strategies + BMC + Cold Start + 除夕</div>
-      <div class="preview">除夕夜🧧！OneyTrader: 18策略42实例 + 5min interval. Business Model Canvas 完成. Cold Start 获客计划. Aggregator 倾向 YBR $195/笔. FHC PAYG 通用版. Oney Security v1.1. LINE Sticker V1 审核通过上线🎉。Mentor landing page deployed。</div>
+      <div class="title">OneyTrader 18 Strategies + BMC + 除夕</div>
+      <div class="preview">除夕夜🧧！OneyTrader: 18策略42实例 + 5min interval. Business Model Canvas 完成. Cold Start 获客计划. LINE Sticker V1 上线🎉。</div>
     </div>
     <div class="memory-entry" onclick="this.classList.toggle('expanded')">
       <div class="meta"><span class="tag">Daily</span><span class="date-tag">2026-02-15 (Sun)</span></div>
-      <div class="title">Security Repositioning 蓝海 + SEO Audit + 跑步 PR</div>
-      <div class="preview">重大战略: Oney Security 重新定位 — "Quickli = Serviceability, Oney = Security" 全球零竞品蓝海！6大模块 + Lender Appetite Indicator. 全站 SEO: 14页 OG + JSON-LD + PNG→WebP. 3km PR 5:02/km. 3份竞品研究报告完成。</div>
-    </div>
-  </div>
-
-  <div class="section-title">🏛️ Major Events</div>
-  <div class="memory-section">
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Event</span><span class="date-tag">2026-02-13</span></div>
-      <div class="title">假期 Day 1: 全站QA + 品牌一致性</div>
-      <div class="preview">全站QA + 品牌一致性 + 移动端适配 + 主站检查。品牌故事初稿完成。30→25 客户数全站统一。</div>
-    </div>
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Event</span><span class="date-tag">2026-02-11</span></div>
-      <div class="title">Google Sheets 集成 + Twenty CRM + Sub-Agent 团队</div>
-      <div class="preview">Google Sheets 集成通过. Jim Loehr 能量管理. REA/Simplicity 收购, Ryan Nelson 人脉恢复. Twenty CRM 部署. Sub-Agent 团队配置。</div>
-    </div>
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Event</span><span class="date-tag">2026-02-10</span></div>
-      <div class="title">Logo 最终版定稿！全网站部署</div>
-      <div class="preview">Logo 最终版定稿并全网站部署。Oracle CLI 配置. GitHub 探索 25 个 skills. commercial-lending-au Skill 开发完成。App Store 决策: 暂不上架。</div>
-    </div>
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Event</span><span class="date-tag">2026-02-05</span></div>
-      <div class="title">ClawdHub 首发 2 Skills!</div>
-      <div class="preview">ClawdHub 发布 2 个 Skills (aussie-mortgage-calc, rba-rate-intelligence). Oney 学完全部 52 个 Clawdbot Skills。</div>
-    </div>
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Event</span><span class="date-tag">2026-02-04</span></div>
-      <div class="title">产品命名 + 定价策略确定</div>
-      <div class="preview">产品命名 + 定价策略确定。Oney Tools 架构重构。</div>
-    </div>
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Event</span><span class="date-tag">2026-02-03</span></div>
-      <div class="title">Pitch Deck + RBA Tracker V1</div>
-      <div class="preview">Pitch Deck 完成. RBA + CPI Tracker V1. Dong 说未来要出书《Oney的成长》。</div>
-    </div>
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Event</span><span class="date-tag">2026-02-02</span></div>
-      <div class="title">品牌设计定稿 + Email 架构</div>
-      <div class="preview">品牌设计定稿. Email 架构确定。</div>
+      <div class="title">Security Repositioning 蓝海 + SEO Audit</div>
+      <div class="preview">重大战略: Oney Security 重新定位 — "Quickli = Serviceability, Oney = Security" 全球零竞品蓝海！全站 SEO: 14页 OG + JSON-LD + PNG→WebP. 3km PR 5:02/km。</div>
     </div>
   </div>
 </div>
 
-<!-- RELATIONSHIPS -->
+<!-- ========== FITNESS ========== -->
+<div class="tab-content" id="tab-fitness">
+  <div class="section-title">💪 Fitness Tracker</div>
+  
+  <!-- Quick stats -->
+  <div class="grid grid-3" style="margin-bottom:16px">
+    <div class="card stat"><div class="num" id="fitWeek">-</div><div class="label">This Week</div></div>
+    <div class="card stat"><div class="num" id="fitMonth">-</div><div class="label">This Month</div></div>
+    <div class="card stat"><div class="num" id="fitStreak">-</div><div class="label">Streak 🔥</div></div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="fit-cal-nav">
+      <button onclick="changeCalMonth(-1)">‹</button>
+      <span class="cal-month" id="calMonthLabel"></span>
+      <button onclick="changeCalMonth(1)">›</button>
+    </div>
+    <div class="fit-calendar" id="fitCalendar"></div>
+  </div>
+
+  <!-- Quick check-in -->
+  <div class="section-title">⚡ Quick Check-in</div>
+  <div class="quick-workouts" style="margin-bottom:16px">
+    <button class="quick-workout-btn" onclick="quickWorkout('run','🏃 Running')">🏃 Running</button>
+    <button class="quick-workout-btn" onclick="quickWorkout('strength','💪 Strength')">💪 Strength</button>
+    <button class="quick-workout-btn" onclick="quickWorkout('pt','🏋️ PT Session')">🏋️ PT</button>
+    <button class="quick-workout-btn" onclick="quickWorkout('football','⚽ Football')">⚽ Football</button>
+    <button class="quick-workout-btn" onclick="quickWorkout('tennis','🎾 Tennis')">🎾 Tennis</button>
+    <button class="quick-workout-btn" onclick="quickWorkout('walk','🚶 Walk')">🚶 Walk</button>
+  </div>
+
+  <!-- Workout log -->
+  <div class="section-title">📋 Recent Workouts</div>
+  <div id="fitnessLog">
+    <div class="skeleton" style="width:90%"></div>
+    <div class="skeleton" style="width:70%"></div>
+  </div>
+</div>
+
+<!-- ========== OLIVIA ========== -->
+<div class="tab-content" id="tab-olivia">
+  <div class="section-title">❤️ Olivia</div>
+  
+  <!-- Countdowns -->
+  <div class="grid grid-2" style="margin-bottom:16px">
+    <div class="olivia-countdown">
+      <div class="big-num" id="oliviaAnniv"></div>
+      <div class="cd-label">💒 结婚纪念日<br>March 5</div>
+    </div>
+    <div class="olivia-countdown">
+      <div class="big-num" id="oliviaBday"></div>
+      <div class="cd-label">🎂 生日 (in Japan!)<br>June 17</div>
+    </div>
+  </div>
+
+  <!-- Category filter -->
+  <div class="filter-chips" id="oliviaFilters">
+    <span class="chip active" onclick="filterOlivia('all',this)">All</span>
+    <span class="chip" onclick="filterOlivia('anniversary',this)">💒 Anniversary</span>
+    <span class="chip" onclick="filterOlivia('birthday',this)">🎂 Birthday</span>
+    <span class="chip" onclick="filterOlivia('preferences',this)">⭐ Preferences</span>
+    <span class="chip" onclick="filterOlivia('gifts',this)">🎁 Gifts</span>
+    <span class="chip" onclick="filterOlivia('memories',this)">💝 Memories</span>
+  </div>
+
+  <div id="oliviaList">
+    <div class="skeleton" style="width:80%"></div>
+    <div class="skeleton" style="width:60%"></div>
+  </div>
+</div>
+
+<!-- ========== CONTACTS ========== -->
 <div class="tab-content" id="tab-relationships">
   <div class="section-title">👥 Contacts <button class="add-btn" onclick="openForm('contact')">➕ Add</button></div>
   <div class="section-title">👨‍👩‍👧 Family</div>
@@ -468,10 +585,7 @@ a{color:var(--green);text-decoration:none}
     <span class="badge badge-family">Family</span>
     <div class="name">Olivia 🤍</div>
     <div class="role">太太 — 结婚快10年 | 亚甲炎康复中</div>
-    <div class="detail">
-      <span>🎂 June 17 (在日本庆祝!)</span>
-      <span>💒 Anniversary: March 5</span>
-    </div>
+    <div class="detail"><span>🎂 June 17</span><span>💒 March 5</span></div>
   </div>
 
   <div class="section-title">🤝 Industry Contacts</div>
@@ -479,25 +593,19 @@ a{color:var(--green);text-decoration:none}
     <span class="badge badge-industry">Industry</span>
     <div class="name">Ryan Nelson</div>
     <div class="role">Simplicity Loans (GM) / StG 时认识 — REA 收购后 cash out</div>
-    <div class="detail">
-      <span>📅 Last: 2026-02-11</span>
-      <span>🔄 Quarterly</span>
-      <span>💡 Commercial lending 人脉</span>
-    </div>
+    <div class="detail"><span>📅 Last: 2026-02-11</span><span>🔄 Quarterly</span></div>
   </div>
 
   <div class="section-title">🏦 NAB Work Contacts</div>
   <div class="contact-card">
     <span class="badge badge-bank">NAB</span>
     <div class="name">Norm Meka</div>
-    <div class="role">Associate Director, Diversified Credit — Credit Manager</div>
-    <div class="detail"><span>📋 Construction Deal deferral contact</span></div>
+    <div class="role">Associate Director, Diversified Credit</div>
   </div>
   <div class="contact-card">
     <span class="badge badge-bank">NAB</span>
     <div class="name">Richard Curtis</div>
-    <div class="role">Associate Director, Construction Risk North — CRM</div>
-    <div class="detail"><span>📋 Pushback on builder experience — prefers company track record</span></div>
+    <div class="role">Associate Director, Construction Risk North</div>
   </div>
 
   <div class="section-title">📋 Aggregator Contacts</div>
@@ -505,17 +613,10 @@ a{color:var(--green);text-decoration:none}
     <span class="badge badge-industry">Aggregator</span>
     <div class="name">Rafael (Connective)</div>
     <div class="role">Connective aggregator rep — 92% split, trail portable</div>
-    <div class="detail"><span>📞 Follow up call pending</span></div>
-  </div>
-
-  <div class="section-title">📅 Important Dates</div>
-  <div class="card">
-    <div class="countdown"><div class="days" id="annivDays"></div><div class="info"><div class="name">💒 结婚纪念日</div><div class="date">March 5</div></div></div>
-    <div class="countdown"><div class="days" id="oliBday"></div><div class="info"><div class="name">🎂 Olivia Birthday (in Japan!)</div><div class="date">June 17</div></div></div>
   </div>
 </div>
 
-<!-- PROJECTS -->
+<!-- ========== PROJECTS ========== -->
 <div class="tab-content" id="tab-projects">
   <div class="section-title">🗺️ Oney & Co 6-Month Roadmap</div>
   <div class="card" style="margin-bottom:16px">
@@ -531,137 +632,228 @@ a{color:var(--green);text-decoration:none}
 
   <div class="section-title">📦 Product Matrix</div>
   <div class="grid grid-3" style="margin-bottom:16px">
-    <div class="product-card">
-      <div class="icon">📊</div>
-      <div class="pname">Oney Assess</div>
-      <div class="price">Free / $149</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">Commercial Investment Calculator</div>
-      <div class="pstatus status-live">Live</div>
-    </div>
-    <div class="product-card">
-      <div class="icon">📈</div>
-      <div class="pname">Oney Analyse</div>
-      <div class="price">Free / $199 / $349</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">Multi-Lender Loan Calculator</div>
-      <div class="pstatus status-dev">Polishing</div>
-    </div>
-    <div class="product-card">
-      <div class="icon">🛡️</div>
-      <div class="pname">Oney Security</div>
-      <div class="price">Free / $79mo / $299mo</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">6-Module Security Risk — 蓝海!</div>
-      <div class="pstatus status-dev">v1.1 Dev</div>
-    </div>
-    <div class="product-card">
-      <div class="icon">🔒</div>
-      <div class="pname">Oney Secure</div>
-      <div class="price">$99</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">Zoning→LVR</div>
-      <div class="pstatus status-live">Live</div>
-    </div>
-    <div class="product-card">
-      <div class="icon">💼</div>
-      <div class="pname">Oney Serve</div>
-      <div class="price">$149</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">Servicing Calculator</div>
-      <div class="pstatus status-live">Live</div>
-    </div>
-    <div class="product-card">
-      <div class="icon">⭐</div>
-      <div class="pname">Oney Pro Suite</div>
-      <div class="price">$49/mo · $399/yr</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">All-in-one Bundle</div>
-      <div class="pstatus status-plan">Planned</div>
-    </div>
+    <div class="product-card"><div class="icon">📊</div><div class="pname">Oney Assess</div><div class="price">Free / $149</div><div class="pstatus status-live">Live</div></div>
+    <div class="product-card"><div class="icon">📈</div><div class="pname">Oney Analyse</div><div class="price">Free / $199 / $349</div><div class="pstatus status-dev">Polishing</div></div>
+    <div class="product-card"><div class="icon">🛡️</div><div class="pname">Oney Security</div><div class="price">Free / $79mo / $299mo</div><div class="pstatus status-dev">v1.1 Dev</div></div>
+    <div class="product-card"><div class="icon">🔒</div><div class="pname">Oney Secure</div><div class="price">$99</div><div class="pstatus status-live">Live</div></div>
+    <div class="product-card"><div class="icon">💼</div><div class="pname">Oney Serve</div><div class="price">$149</div><div class="pstatus status-live">Live</div></div>
+    <div class="product-card"><div class="icon">⭐</div><div class="pname">Oney Pro Suite</div><div class="price">$49/mo · $399/yr</div><div class="pstatus status-plan">Planned</div></div>
   </div>
 
   <div class="section-title">🤖 Skills & ClawHub</div>
   <div class="grid grid-3" style="margin-bottom:16px">
-    <div class="card stat"><div class="num">2</div><div class="label">Published on ClawHub</div><div style="font-size:11px;color:var(--muted);margin-top:4px">aussie-mortgage-calc<br>rba-rate-intelligence</div></div>
-    <div class="card stat"><div class="num">1</div><div class="label">Developed (Local)</div><div style="font-size:11px;color:var(--muted);margin-top:4px">commercial-lending-au</div></div>
-    <div class="card stat"><div class="num">6+</div><div class="label">Installed</div><div style="font-size:11px;color:var(--muted);margin-top:4px">negotiation, ceo-advisor,<br>security-audit, humanizer...</div></div>
+    <div class="card stat"><div class="num">2</div><div class="label">Published on ClawHub</div></div>
+    <div class="card stat"><div class="num">1</div><div class="label">Developed (Local)</div></div>
+    <div class="card stat"><div class="num">6+</div><div class="label">Installed</div></div>
   </div>
 
   <div class="section-title">🌐 Websites</div>
   <div class="grid grid-2">
-    <div class="card">
-      <h3><span class="emoji">🏠</span> oneyco.com.au</h3>
-      <div style="font-size:13px;color:var(--muted)">Main website — GitHub Pages</div>
-      <div style="margin-top:8px"><span style="color:var(--green);font-weight:600">● Online</span></div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">Pages: index, broker, mentor, vision, fhc</div>
-    </div>
-    <div class="card">
-      <h3><span class="emoji">🔧</span> tools.oneyco.com.au</h3>
-      <div style="font-size:13px;color:var(--muted)">Tools site — 13 calculators</div>
-      <div style="margin-top:8px"><span style="color:var(--green);font-weight:600">● Online</span></div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">Assess, Analyse, Secure, Serve + FHC tools</div>
-    </div>
+    <div class="card"><h3><span class="emoji">🏠</span> oneyco.com.au</h3><div style="font-size:13px;color:var(--muted)">Main website — GitHub Pages</div><div style="margin-top:8px"><span style="color:var(--green);font-weight:600">● Online</span></div></div>
+    <div class="card"><h3><span class="emoji">🔧</span> tools.oneyco.com.au</h3><div style="font-size:13px;color:var(--muted)">Tools site — 13 calculators</div><div style="margin-top:8px"><span style="color:var(--green);font-weight:600">● Online</span></div></div>
   </div>
 </div>
 
-<!-- KNOWLEDGE -->
+<!-- ========== KNOWLEDGE ========== -->
 <div class="tab-content" id="tab-knowledge">
   <div class="section-title">📖 Industry Terms <button class="add-btn" onclick="openForm('knowledge')">➕ Add</button></div>
   <div class="card" style="margin-bottom:16px">
     <div class="term"><div class="abbr">LVR</div><div class="def">Loan-to-Value Ratio — loan amount as % of property value. Big 4 max ~60% for commercial.</div></div>
     <div class="term"><div class="abbr">LMI</div><div class="def">Lenders Mortgage Insurance — required when LVR exceeds lender threshold (usually >80% resi).</div></div>
     <div class="term"><div class="abbr">DSCR</div><div class="def">Debt Service Coverage Ratio — net operating income / debt service. Must be >1.0, banks prefer >1.30.</div></div>
-    <div class="term"><div class="abbr">ICR</div><div class="def">Interest Coverage Ratio — NOI / interest expense. Measures ability to cover interest payments.</div></div>
-    <div class="term"><div class="abbr">WALE</div><div class="def">Weighted Average Lease Expiry — average remaining lease term weighted by income. Longer = better security.</div></div>
-    <div class="term"><div class="abbr">NOI</div><div class="def">Net Operating Income — gross rental income minus operating expenses (before debt service).</div></div>
-    <div class="term"><div class="abbr">ACR</div><div class="def">Australian Credit Representative — registration needed to operate under an aggregator's ACL.</div></div>
+    <div class="term"><div class="abbr">ICR</div><div class="def">Interest Coverage Ratio — NOI / interest expense.</div></div>
+    <div class="term"><div class="abbr">WALE</div><div class="def">Weighted Average Lease Expiry — average remaining lease term weighted by income.</div></div>
+    <div class="term"><div class="abbr">NOI</div><div class="def">Net Operating Income — gross rental income minus operating expenses.</div></div>
+    <div class="term"><div class="abbr">ACR</div><div class="def">Australian Credit Representative — registration under an aggregator's ACL.</div></div>
     <div class="term"><div class="abbr">RPL</div><div class="def">Recognition of Prior Learning — fast-track Cert IV based on industry experience.</div></div>
   </div>
 
   <div class="section-title">🏦 Lender Notes</div>
   <div class="card" style="margin-bottom:16px">
-    <div class="term"><div class="abbr">NAB</div><div class="def">Dong's current employer. Construction risk team strict on company (not individual) track record. Conservative on working capital.</div></div>
-    <div class="term"><div class="abbr">Airport Leasehold</div><div class="def">NAB/ANZ: 50-60% LVR. Thinktank/La Trobe: 60-65%. Need lease instrument from Titles Registry ($20-30) to verify term.</div></div>
-    <div class="term"><div class="abbr">Aggregators</div><div class="def">YBR: $195/deal, zero monthly. Connective: 92% split, trail portable, Rafael as contact. Decision pending.</div></div>
+    <div class="term"><div class="abbr">NAB</div><div class="def">Dong's current employer. Construction risk team strict on company track record.</div></div>
+    <div class="term"><div class="abbr">Airport Leasehold</div><div class="def">NAB/ANZ: 50-60% LVR. Thinktank/La Trobe: 60-65%.</div></div>
+    <div class="term"><div class="abbr">Aggregators</div><div class="def">YBR: $195/deal, zero monthly. Connective: 92% split, trail portable.</div></div>
   </div>
 
   <div class="section-title">🔍 Competitive Intelligence</div>
   <div class="card" style="margin-bottom:16px">
-    <div class="competitor"><div class="cname">Quickli</div><div class="cdesc">57% market share in serviceability calculators. Dominant player — Oney won't compete here. Instead: "Quickli = Serviceability, Oney = Security".</div></div>
-    <div class="competitor"><div class="cname">BrokerEngine</div><div class="cdesc">Broker workflow automation. Full CRM + compliance. Enterprise-focused.</div></div>
-    <div class="competitor"><div class="cname">CitoPlus</div><div class="cdesc">Competitive analysis completed 2026-02-06. Detailed in oney-co/research/.</div></div>
-    <div class="competitor"><div class="cname">Canstar / MoneySmart</div><div class="cdesc">Free comparison tools monetized via referral commissions. Massive traffic but generic.</div></div>
+    <div class="competitor"><div class="cname">Quickli</div><div class="cdesc">57% market share in serviceability. "Quickli = Serviceability, Oney = Security".</div></div>
+    <div class="competitor"><div class="cname">BrokerEngine</div><div class="cdesc">Broker workflow automation. Full CRM + compliance.</div></div>
+    <div class="competitor"><div class="cname">CitoPlus</div><div class="cdesc">Competitive analysis completed 2026-02-06.</div></div>
   </div>
 
   <div class="section-title">📚 Key Documents</div>
-  <div class="card" style="margin-bottom:16px">
-    <div class="term"><div class="abbr">📄 CEO Advisor Report</div><div class="def">oney-co/strategy/ceo-advisor-report-2026-02-17.md — 4 scenarios, 800 lines</div></div>
-    <div class="term"><div class="abbr">📄 Business Model Canvas</div><div class="def">oney-co/strategy/business-model-canvas.md — break-even 1 deal/month</div></div>
-    <div class="term"><div class="abbr">📄 Cold Start Plan</div><div class="def">oney-co/strategy/cold-start-plan.md — FHC → LinkedIn → SEO → Referral</div></div>
-    <div class="term"><div class="abbr">📄 Security Repositioning</div><div class="def">oney-co/strategy/oney-security-repositioning-plan.md — 69KB, Year 3 target $1M+</div></div>
-    <div class="term"><div class="abbr">📄 Deal Triage Checklist™</div><div class="def">oney-co/strategy/deal-triage-checklist.md — Gate Check + 4 Pillars × 13 questions</div></div>
-    <div class="term"><div class="abbr">📄 Brand Story</div><div class="def">oney-co/drafts/brand-story-draft.md</div></div>
-    <div class="term"><div class="abbr">📄 Oney DNA</div><div class="def">oney-co/strategy/oney-dna-insights.md</div></div>
-  </div>
-
-  <div class="section-title">🤖 Agent Architecture</div>
   <div class="card">
-    <div style="font-size:13px;line-height:1.8">
-      <div style="text-align:center;margin-bottom:12px;font-size:14px;font-weight:600">Dong → Oney (CEO) + 小管家 Liv</div>
-      <table style="width:100%;font-size:12px;border-collapse:collapse">
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px;font-weight:600;color:var(--green)">Oney (main)</td><td style="padding:6px">Opus 4.5</td><td style="padding:6px">业务、产品、战略、日常</td></tr>
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px;font-weight:600;color:var(--purple-light)">小管家 Liv</td><td style="padding:6px">Haiku 4.5</td><td style="padding:6px">生活、健身、家务</td></tr>
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px;font-weight:600">CTO</td><td style="padding:6px">Opus 4.6</td><td style="padding:6px">代码、技术决策</td></tr>
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px;font-weight:600">Analyst</td><td style="padding:6px">Sonnet 4.5</td><td style="padding:6px">市场研究、数据</td></tr>
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px;font-weight:600">Creative</td><td style="padding:6px">Opus 4.5</td><td style="padding:6px">品牌、文案</td></tr>
-        <tr><td style="padding:6px;font-weight:600">Ops</td><td style="padding:6px">Haiku 4.5</td><td style="padding:6px">批量任务</td></tr>
-      </table>
-    </div>
+    <div class="term"><div class="abbr">📄 CEO Advisor Report</div><div class="def">4 scenarios, 800 lines</div></div>
+    <div class="term"><div class="abbr">📄 Business Model Canvas</div><div class="def">Break-even 1 deal/month</div></div>
+    <div class="term"><div class="abbr">📄 Cold Start Plan</div><div class="def">FHC → LinkedIn → SEO → Referral</div></div>
+    <div class="term"><div class="abbr">📄 Security Repositioning</div><div class="def">69KB, Year 3 target $1M+</div></div>
+    <div class="term"><div class="abbr">📄 Deal Triage Checklist™</div><div class="def">Gate Check + 4 Pillars × 13 questions</div></div>
   </div>
 </div>
 
+<!-- ========== INVENTORY ========== -->
+<div class="tab-content" id="tab-inventory">
+  <div class="section-title">📦 Home Inventory</div>
+  
+  <div class="filter-chips" id="invFilters">
+    <span class="chip active" onclick="filterInventory('all',this)">All</span>
+    <span class="chip" onclick="filterInventory('kitchen',this)">🍳 Kitchen</span>
+    <span class="chip" onclick="filterInventory('bathroom',this)">🛁 Bathroom</span>
+    <span class="chip" onclick="filterInventory('cleaning',this)">🧹 Cleaning</span>
+    <span class="chip" onclick="filterInventory('medicine',this)">💊 Medicine</span>
+    <span class="chip" onclick="filterInventory('pantry',this)">🥫 Pantry</span>
+    <span class="chip" onclick="filterInventory('other',this)">📋 Other</span>
+  </div>
+
+  <div id="inventoryList">
+    <div class="skeleton" style="width:90%"></div>
+    <div class="skeleton" style="width:70%"></div>
+  </div>
+</div>
+
+<!-- ========== FINANCE ========== -->
+<div class="tab-content" id="tab-finance">
+  <div class="section-title">💰 Finance Tracker</div>
+  
+  <!-- Monthly summary -->
+  <div class="grid grid-3" style="margin-bottom:16px">
+    <div class="card stat"><div class="num" id="finIncome" style="color:var(--green)">$0</div><div class="label">Income</div></div>
+    <div class="card stat"><div class="num" id="finExpense" style="color:var(--red)">$0</div><div class="label">Expenses</div></div>
+    <div class="card stat"><div class="num" id="finNet">$0</div><div class="label">Net</div></div>
+  </div>
+
+  <!-- Pie chart -->
+  <div class="card" style="margin-bottom:16px">
+    <h3>📊 Expense Breakdown</h3>
+    <div class="pie-container" id="pieContainer">
+      <div style="color:var(--muted);font-size:13px">Loading...</div>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-chips" id="finFilters">
+    <span class="chip active" onclick="filterFinance('all',this)">All</span>
+    <span class="chip" onclick="filterFinance('income',this)">💚 Income</span>
+    <span class="chip" onclick="filterFinance('expense',this)">🔴 Expense</span>
+  </div>
+
+  <div id="financeList">
+    <div class="skeleton" style="width:90%"></div>
+    <div class="skeleton" style="width:70%"></div>
+  </div>
+</div>
+
+<!-- ========== READING ========== -->
+<div class="tab-content" id="tab-reading">
+  <div class="section-title">📖 Reading List</div>
+  
+  <div class="filter-chips" id="readFilters">
+    <span class="chip active" onclick="filterReading('all',this)">All</span>
+    <span class="chip" onclick="filterReading('reading',this)">📖 Reading</span>
+    <span class="chip" onclick="filterReading('finished',this)">✅ Finished</span>
+    <span class="chip" onclick="filterReading('wishlist',this)">📋 Wishlist</span>
+  </div>
+
+  <div id="readingList">
+    <div class="skeleton" style="width:90%"></div>
+    <div class="skeleton" style="width:70%"></div>
+  </div>
+</div>
+
+<!-- ========== GOALS ========== -->
+<div class="tab-content" id="tab-goals">
+  <div class="section-title">🎯 Goals</div>
+  
+  <div class="filter-chips" id="goalFilters">
+    <span class="chip active" onclick="filterGoals('all',this)">All</span>
+    <span class="chip" onclick="filterGoals('career',this)">💼 Career</span>
+    <span class="chip" onclick="filterGoals('health',this)">🏃 Health</span>
+    <span class="chip" onclick="filterGoals('finance',this)">💰 Finance</span>
+    <span class="chip" onclick="filterGoals('personal',this)">🧠 Personal</span>
+  </div>
+
+  <div id="goalsList">
+    <div class="skeleton" style="width:90%"></div>
+    <div class="skeleton" style="width:70%"></div>
+  </div>
+</div>
+
+<!-- ========== IDEAS ========== -->
+<div class="tab-content" id="tab-ideas">
+  <div class="section-title">💡 Ideas</div>
+  
+  <div class="filter-chips" id="ideaFilters">
+    <span class="chip active" onclick="filterIdeas('all',this)">All</span>
+    <span class="chip" onclick="filterIdeas('product',this)">📦 Product</span>
+    <span class="chip" onclick="filterIdeas('content',this)">📝 Content</span>
+    <span class="chip" onclick="filterIdeas('business',this)">💼 Business</span>
+    <span class="chip" onclick="filterIdeas('tech',this)">🔧 Tech</span>
+  </div>
+
+  <div id="ideasList">
+    <div class="skeleton" style="width:90%"></div>
+    <div class="skeleton" style="width:70%"></div>
+  </div>
+</div>
+
+<!-- Bottom Sheet Overlay -->
+<div class="bottom-sheet-overlay" id="bsOverlay" onclick="closeForm()"></div>
+<div class="bottom-sheet" id="bsSheet">
+  <div class="handle"></div>
+  <h3 id="bsTitle"></h3>
+  <div id="bsFields"></div>
+  <div class="btn-row" id="bsBtnRow">
+    <button class="submit-btn" id="bsSubmit" onclick="submitForm()">Save</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
 <script>
-// Tab switching
-function switchTab(id) {
+// === State ===
+let currentTab = 'dashboard';
+let currentFormType = '';
+let editingId = null;
+let editingSheet = null;
+let deleteId = null;
+let deleteSheet = null;
+let calMonth = new Date().getMonth();
+let calYear = new Date().getFullYear();
+
+// Data caches
+const DATA = {};
+
+// === Tab switching ===
+function switchTab(id, el) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  event.target.classList.add('active');
+  document.querySelectorAll('.tab-bar-item').forEach(b => b.classList.remove('active'));
+  const tab = document.getElementById('tab-' + id);
+  if (tab) tab.classList.add('active');
+  if (el && el.classList) el.classList.add('active');
+  currentTab = id;
+  
+  // Show FAB for tabs that support adding
+  const fabTabs = ['fitness','olivia','inventory','finance','reading','goals','ideas'];
+  const fab = document.getElementById('fab');
+  fab.classList.toggle('visible', fabTabs.includes(id));
+  
+  // Load data on first visit
+  loadTabData(id);
+}
+
+function toggleMore(e) {
+  e.stopPropagation();
+  document.getElementById('moreMenu').classList.toggle('active');
+}
+function closeMore() { document.getElementById('moreMenu').classList.remove('active'); }
+document.addEventListener('click', e => { if (!e.target.closest('.more-menu') && !e.target.closest('.tab-bar-item')) closeMore(); });
+
+// FAB action
+function fabAction() {
+  const formMap = {fitness:'fitness',olivia:'olivia',inventory:'inventory',finance:'finance',reading:'reading',goals:'goals',ideas:'ideas'};
+  if (formMap[currentTab]) openForm(formMap[currentTab]);
 }
 
 // Theme
@@ -670,118 +862,8 @@ function toggleTheme() {
   const isDark = html.getAttribute('data-theme') === 'dark';
   html.setAttribute('data-theme', isDark ? 'light' : 'dark');
   document.querySelector('.theme-btn').textContent = isDark ? '☀️' : '🌙';
-  document.querySelector('meta[name="theme-color"]').content = isDark ? '#f5f5f5' : '#0a0a0a';
 }
 
-// Date & Countdowns
-function updateDate() {
-  const now = new Date();
-  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Australia/Sydney' };
-  document.getElementById('todayDate').textContent = now.toLocaleDateString('en-AU', opts);
-  const hour = now.getHours();
-  const greeting = hour < 12 ? 'Good morning, Dong ☀️' : hour < 18 ? 'Good afternoon, Dong 🌤️' : 'Good evening, Dong 🌙';
-  document.getElementById('todayGreeting').textContent = greeting;
-}
-
-function daysUntil(month, day) {
-  const now = new Date();
-  let target = new Date(now.getFullYear(), month - 1, day);
-  if (target < now) target.setFullYear(target.getFullYear() + 1);
-  return Math.ceil((target - now) / 86400000);
-}
-
-function updateCountdowns() {
-  const events = [
-    { el: 'annivDays', m: 3, d: 5 },
-    { el: 'oliBday', m: 6, d: 17 }
-  ];
-  const countdownData = [
-    { name: '💒 结婚纪念日', date: 'March 5', m: 3, d: 5 },
-    { name: '🇸🇬 新加坡旅行', date: 'Apr-May (TBD)', m: 4, d: 15 },
-    { name: '🇯🇵 Japan Trip', date: 'June 12', m: 6, d: 12 },
-    { name: '🎂 Olivia Birthday', date: 'June 17 (in Japan!)', m: 6, d: 17 },
-    { name: '🚀 Oney & Co Launch', date: 'July 2026', m: 7, d: 1 },
-  ];
-  const container = document.getElementById('countdowns');
-  container.innerHTML = countdownData.map(e => {
-    const d = daysUntil(e.m, e.d);
-    return `<div class="countdown"><div class="days">${d}d</div><div class="info"><div class="name">${e.name}</div><div class="date">${e.date}</div></div></div>`;
-  }).join('');
-
-  events.forEach(e => {
-    const el = document.getElementById(e.el);
-    if (el) el.textContent = daysUntil(e.m, e.d) + 'd';
-  });
-}
-
-// Search
-const searchData = [
-  {cat:'Strategy',title:'当前战略',text:'Phase 1 Free Health Check Phase 2 ACR broker 6个月 Roadmap Feb Cert IV Mar 注册公司 Apr aggregator May ACR Jun 营销 Jul launch'},
-  {cat:'Products',title:'Oney Assess',text:'Commercial Investment Calculator Free $149 Gumroad'},
-  {cat:'Products',title:'Oney Analyse',text:'Multi-Lender Loan Calculator Free $199 $349 MLL'},
-  {cat:'Products',title:'Oney Security',text:'6-Module Security Risk Zoning LVR 蓝海 Lender Appetite $79 $299 Quickli'},
-  {cat:'Products',title:'Oney Secure',text:'Zoning to LVR $99'},
-  {cat:'Products',title:'Oney Serve',text:'Servicing Calculator $149'},
-  {cat:'Products',title:'Oney Pro Suite',text:'$49 month $399 year bundle'},
-  {cat:'Family',title:'Olivia',text:'太太 亚甲炎 birthday June 17 Japan anniversary March 5 结婚纪念日'},
-  {cat:'Contact',title:'Ryan Nelson',text:'Simplicity Loans GM StG REA 收购 commercial lending'},
-  {cat:'Contact',title:'Rafael',text:'Connective aggregator 92% split trail portable'},
-  {cat:'Work',title:'NAB Construction Deal',text:'New Directions $7.9M builder Mark Yun Norm Meka Richard Curtis'},
-  {cat:'Work',title:'Gladstone Airport Hangar',text:'leasehold GAC council NAB ANZ 50-60% Thinktank La Trobe'},
-  {cat:'Knowledge',title:'LVR',text:'Loan to Value Ratio property value Big 4 60% commercial'},
-  {cat:'Knowledge',title:'DSCR',text:'Debt Service Coverage Ratio net operating income'},
-  {cat:'Knowledge',title:'ICR',text:'Interest Coverage Ratio NOI interest'},
-  {cat:'Knowledge',title:'ACR',text:'Australian Credit Representative aggregator ACL'},
-  {cat:'Event',title:'Logo 定稿 2026-02-10',text:'Logo 最终版 全网站部署 Oracle CLI GitHub skills'},
-  {cat:'Event',title:'ClawHub 首发 2026-02-05',text:'aussie-mortgage-calc rba-rate-intelligence 52 skills'},
-  {cat:'Event',title:'Security Repositioning 2026-02-15',text:'Quickli Serviceability Oney Security 蓝海 $1M Year 3'},
-  {cat:'Strategy',title:'Cold Start Plan',text:'FHC LinkedIn SEO referral Phase 0 1 2'},
-  {cat:'Strategy',title:'BMC',text:'Business Model Canvas break-even 1 deal month LTV CAC'},
-  {cat:'Agent',title:'Agent Architecture',text:'Oney CEO Opus CTO Analyst Creative Ops 小管家 Liv Haiku'},
-  {cat:'Trading',title:'OneyTrader',text:'IBKR $1000 AUD 外汇 18 strategies 42 instances 5min interval'},
-  {cat:'Daily',title:'2026-02-18',text:'NAB Construction Deal Connective Rafael site review Humanizer skills'},
-  {cat:'Daily',title:'2026-02-17',text:'CEO Advisor report n8n onboarding V3 stickers cancelled negotiation'},
-  {cat:'Daily',title:'2026-02-16',text:'除夕 OneyTrader BMC Cold Start YBR FHC PAYG Security v1.1 LINE Sticker'},
-  {cat:'Daily',title:'2026-02-15',text:'Security repositioning SEO audit 跑步 PR 3km competitors APRA'},
-];
-
-const searchInput = document.getElementById('searchInput');
-const searchResults = document.getElementById('searchResults');
-
-searchInput.addEventListener('input', function() {
-  const q = this.value.toLowerCase().trim();
-  if (!q) { searchResults.classList.remove('active'); return; }
-  const matches = searchData.filter(d => (d.title + ' ' + d.text + ' ' + d.cat).toLowerCase().includes(q)).slice(0, 8);
-  if (!matches.length) { searchResults.classList.remove('active'); return; }
-  searchResults.innerHTML = matches.map(m => {
-    const idx = (m.title + ' ' + m.text).toLowerCase().indexOf(q);
-    const snippet = m.text.substring(Math.max(0, idx - 20), idx + 60);
-    return `<div class="search-item"><div class="cat">${m.cat}</div><div class="title">${m.title}</div><div class="snippet">...${snippet}...</div></div>`;
-  }).join('');
-  searchResults.classList.add('active');
-});
-
-document.addEventListener('click', e => { if (!e.target.closest('.search-wrap')) searchResults.classList.remove('active'); });
-
-// Init
-updateDate();
-updateCountdowns();
-setInterval(updateDate, 60000);
-</script>
-
-<!-- Bottom Sheet Overlay -->
-<div class="bottom-sheet-overlay" id="bsOverlay" onclick="closeForm()"></div>
-<div class="bottom-sheet" id="bsSheet">
-  <div class="handle"></div>
-  <h3 id="bsTitle"></h3>
-  <div id="bsFields"></div>
-  <button class="submit-btn" id="bsSubmit" onclick="submitForm()">Save</button>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-
-<script>
 // === Google Sheets API Layer ===
 const API = {
   async get(sheet) {
@@ -792,11 +874,11 @@ const API = {
     } catch(e) { console.warn('API get failed:', e); return null; }
   },
   async post(action, sheet, data, id) {
-    if (!SB_CONFIG.API_URL) { showToast('API not configured — see DEPLOY.md', 'error'); return null; }
+    if (!SB_CONFIG.API_URL) { showToast('API not configured', 'error'); return null; }
     try {
       const r = await fetch(SB_CONFIG.API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' }, // Apps Script quirk
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ key: SB_CONFIG.API_KEY, action, sheet, data, id })
       });
       return await r.json();
@@ -814,19 +896,67 @@ function showToast(msg, type='success') {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+// === Delete Modal ===
+function openDeleteModal(id, sheet) {
+  deleteId = id; deleteSheet = sheet;
+  document.getElementById('deleteModal').classList.add('active');
+}
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.remove('active');
+  deleteId = null; deleteSheet = null;
+}
+async function confirmDelete() {
+  if (!deleteId || !deleteSheet) return;
+  const res = await API.post('delete', deleteSheet, null, deleteId);
+  closeDeleteModal();
+  if (res && res.success) { showToast('已删除'); loadTabData(currentTab, true); }
+  else showToast('Delete failed', 'error');
+}
+
+// === Date & Countdowns ===
+function daysUntil(month, day) {
+  const now = new Date();
+  let target = new Date(now.getFullYear(), month - 1, day);
+  if (target < now) target.setFullYear(target.getFullYear() + 1);
+  return Math.ceil((target - now) / 86400000);
+}
+
+function updateDate() {
+  const now = new Date();
+  document.getElementById('todayDate').textContent = now.toLocaleDateString('en-AU', { weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'Australia/Sydney'});
+  const hour = now.getHours();
+  document.getElementById('todayGreeting').textContent = hour < 12 ? 'Good morning, Dong ☀️' : hour < 18 ? 'Good afternoon, Dong 🌤️' : 'Good evening, Dong 🌙';
+}
+
+function updateCountdowns() {
+  const events = [
+    { name: '💒 结婚纪念日', date: 'March 5', m: 3, d: 5 },
+    { name: '🇸🇬 新加坡旅行', date: 'Apr-May', m: 4, d: 15 },
+    { name: '🇯🇵 Japan Trip', date: 'June 12', m: 6, d: 12 },
+    { name: '🎂 Olivia Birthday', date: 'June 17', m: 6, d: 17 },
+    { name: '🚀 Oney & Co Launch', date: 'July 2026', m: 7, d: 1 },
+  ];
+  document.getElementById('countdowns').innerHTML = events.map(e => {
+    const d = daysUntil(e.m, e.d);
+    return `<div class="countdown"><div class="days">${d}d</div><div class="info"><div class="name">${e.name}</div><div class="date">${e.date}</div></div></div>`;
+  }).join('');
+}
+
+// === Olivia Countdowns ===
+function updateOliviaCountdowns() {
+  const a = document.getElementById('oliviaAnniv');
+  const b = document.getElementById('oliviaBday');
+  if (a) a.textContent = daysUntil(3, 5) + '天';
+  if (b) b.textContent = daysUntil(6, 17) + '天';
+}
+
 // === QuickNotes ===
 async function loadQuickNotes() {
   const data = await API.get('QuickNotes');
   const list = document.getElementById('qnList');
-  if (!data || !data.rows || !data.rows.length) {
-    list.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">No notes yet. Say something!</div>';
-    return;
-  }
+  if (!data?.rows?.length) { list.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">No notes yet. Say something!</div>'; return; }
   list.innerHTML = data.rows.slice(-10).reverse().map(r =>
-    `<div class="qn-item from-${(r.from||'dong').toLowerCase()}">
-      <span>${r.note}</span>
-      <span class="qn-meta">${r.from || ''} · ${(r.timestamp||'').slice(0,16)}</span>
-    </div>`
+    `<div class="qn-item from-${(r.from||'dong').toLowerCase()}"><span>${r.note}</span><span class="qn-meta">${r.from||''} · ${(r.timestamp||'').slice(0,16)}</span></div>`
   ).join('');
 }
 
@@ -835,67 +965,145 @@ async function sendQuickNote() {
   const note = input.value.trim();
   if (!note) return;
   input.value = '';
-  const data = { id: genId(), timestamp: new Date().toISOString(), note, from: 'Dong' };
-  const res = await API.post('append', 'QuickNotes', data);
-  if (res && res.success) { showToast('Note sent!'); loadQuickNotes(); }
+  const res = await API.post('append', 'QuickNotes', { id: genId(), timestamp: new Date().toISOString(), note, from: 'Dong' });
+  if (res?.success) { showToast('Note sent!'); loadQuickNotes(); }
 }
 
-// === Bottom Sheet Forms ===
-let currentFormType = '';
+// === Generic Record Renderer ===
+function renderRecords(containerId, rows, sheet, renderFn) {
+  const container = document.getElementById(containerId);
+  if (!rows?.length) { container.innerHTML = `<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No records yet. Tap ＋ to add!</div>`; return; }
+  container.innerHTML = rows.map(r => {
+    const body = renderFn(r);
+    return `<div class="record-item" data-id="${r.id}" data-category="${(r.category||r.type||'').toLowerCase()}">
+      <div class="record-main">
+        <div class="record-body">${body}</div>
+        <div class="record-actions">
+          <button onclick="editRecord('${sheet}','${r.id}')" title="Edit">✏️</button>
+          <button class="btn-del" onclick="openDeleteModal('${r.id}','${sheet}')" title="Delete">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// === Edit Record ===
+function editRecord(sheet, id) {
+  const rows = DATA[sheet];
+  if (!rows) return;
+  const row = rows.find(r => r.id === id);
+  if (!row) return;
+  
+  // Map sheet to form type
+  const sheetFormMap = { Fitness:'fitness', Inventory:'inventory', Finance:'finance', Reading:'reading', Goals:'goals', Ideas:'ideas', Olivia:'olivia' };
+  const formType = sheetFormMap[sheet];
+  if (!formType) return;
+  
+  editingId = id;
+  editingSheet = sheet;
+  openForm(formType, row);
+}
+
+// === Form Definitions ===
 const FORMS = {
-  memory: {
-    title: '🧠 Add Memory',
-    fields: [
-      { name: 'date', label: 'Date', type: 'date', default: () => new Date().toISOString().slice(0,10) },
-      { name: 'category', label: 'Category', type: 'select', options: ['Strategy','Daily','Event','Family','Products','Security'] },
-      { name: 'title', label: 'Title', type: 'text' },
-      { name: 'content', label: 'Content', type: 'textarea' },
-      { name: 'tags', label: 'Tags (comma separated)', type: 'text' }
-    ],
-    sheet: 'Memory'
-  },
-  contact: {
-    title: '👥 Add Contact',
-    fields: [
-      { name: 'name', label: 'Name', type: 'text' },
-      { name: 'role', label: 'Role / Title', type: 'text' },
-      { name: 'category', label: 'Category', type: 'select', options: ['Family','Industry','NAB','Aggregator','Client','Other'] },
-      { name: 'lastContact', label: 'Last Contact', type: 'date' },
-      { name: 'birthday', label: 'Birthday', type: 'date' },
-      { name: 'notes', label: 'Notes', type: 'textarea' }
-    ],
-    sheet: 'Contacts'
-  },
-  todo: {
-    title: '📝 Add Todo',
-    fields: [
-      { name: 'text', label: 'Task', type: 'text' },
-      { name: 'priority', label: 'Priority', type: 'select', options: ['high','medium','low'] }
-    ],
-    sheet: 'Todos'
-  },
-  knowledge: {
-    title: '📚 Add Knowledge',
-    fields: [
-      { name: 'category', label: 'Category', type: 'select', options: ['Industry Terms','Lender Notes','Competitive Intel','Documents','Agent'] },
-      { name: 'title', label: 'Title', type: 'text' },
-      { name: 'content', label: 'Content', type: 'textarea' },
-      { name: 'tags', label: 'Tags', type: 'text' }
-    ],
-    sheet: 'Knowledge'
-  }
+  memory: { title:'🧠 Add Memory', sheet:'Memory', fields:[
+    {name:'date',label:'Date',type:'date',default:()=>new Date().toISOString().slice(0,10)},
+    {name:'category',label:'Category',type:'select',options:['Strategy','Daily','Event','Family','Products','Security']},
+    {name:'title',label:'Title',type:'text'},
+    {name:'content',label:'Content',type:'textarea'},
+    {name:'tags',label:'Tags',type:'text'}
+  ]},
+  contact: { title:'👥 Add Contact', sheet:'Contacts', fields:[
+    {name:'name',label:'Name',type:'text'},
+    {name:'role',label:'Role',type:'text'},
+    {name:'category',label:'Category',type:'select',options:['Family','Industry','NAB','Aggregator','Client','Other']},
+    {name:'lastContact',label:'Last Contact',type:'date'},
+    {name:'notes',label:'Notes',type:'textarea'}
+  ]},
+  todo: { title:'📝 Add Todo', sheet:'Todos', fields:[
+    {name:'text',label:'Task',type:'text'},
+    {name:'priority',label:'Priority',type:'select',options:['high','medium','low']}
+  ]},
+  knowledge: { title:'📚 Add Knowledge', sheet:'Knowledge', fields:[
+    {name:'category',label:'Category',type:'select',options:['Industry Terms','Lender Notes','Competitive Intel','Documents']},
+    {name:'title',label:'Title',type:'text'},
+    {name:'content',label:'Content',type:'textarea'}
+  ]},
+  fitness: { title:'💪 Log Workout', sheet:'Fitness', fields:[
+    {name:'date',label:'Date',type:'date',default:()=>new Date().toISOString().slice(0,10)},
+    {name:'type',label:'Type',type:'select',options:['run','strength','pt','football','tennis','walk','swim','yoga','other']},
+    {name:'exercise',label:'Exercise',type:'text'},
+    {name:'sets',label:'Sets',type:'number'},
+    {name:'reps',label:'Reps',type:'number'},
+    {name:'weight',label:'Weight (kg)',type:'number'},
+    {name:'duration',label:'Duration (min)',type:'number'},
+    {name:'notes',label:'Notes',type:'textarea'}
+  ]},
+  inventory: { title:'📦 Add Item', sheet:'Inventory', fields:[
+    {name:'category',label:'Category',type:'select',options:['kitchen','bathroom','cleaning','medicine','pantry','laundry','other']},
+    {name:'item',label:'Item',type:'text'},
+    {name:'quantity',label:'Quantity',type:'number'},
+    {name:'location',label:'Location',type:'text'},
+    {name:'lastChecked',label:'Last Checked',type:'date',default:()=>new Date().toISOString().slice(0,10)},
+    {name:'notes',label:'Notes (low threshold etc)',type:'textarea'}
+  ]},
+  finance: { title:'💰 Add Transaction', sheet:'Finance', fields:[
+    {name:'date',label:'Date',type:'date',default:()=>new Date().toISOString().slice(0,10)},
+    {name:'type',label:'Type',type:'select',options:['income','expense']},
+    {name:'category',label:'Category',type:'select',options:['salary','freelance','tools','food','transport','shopping','bills','health','entertainment','travel','other']},
+    {name:'description',label:'Description',type:'text'},
+    {name:'amount',label:'Amount ($)',type:'number'},
+    {name:'account',label:'Account',type:'select',options:['NAB','CommBank','IBKR','Cash','Other']},
+    {name:'notes',label:'Notes',type:'textarea'}
+  ]},
+  reading: { title:'📖 Add Book', sheet:'Reading', fields:[
+    {name:'date',label:'Date Added',type:'date',default:()=>new Date().toISOString().slice(0,10)},
+    {name:'type',label:'Type',type:'select',options:['book','article','podcast','video']},
+    {name:'title',label:'Title',type:'text'},
+    {name:'author',label:'Author',type:'text'},
+    {name:'status',label:'Status',type:'select',options:['wishlist','reading','finished','abandoned']},
+    {name:'rating',label:'Rating (1-5)',type:'number'},
+    {name:'notes',label:'Notes',type:'textarea'}
+  ]},
+  goals: { title:'🎯 Add Goal', sheet:'Goals', fields:[
+    {name:'category',label:'Category',type:'select',options:['career','health','finance','personal','relationship']},
+    {name:'title',label:'Goal',type:'text'},
+    {name:'target',label:'Target',type:'text'},
+    {name:'current',label:'Current Progress',type:'text'},
+    {name:'deadline',label:'Deadline',type:'date'},
+    {name:'status',label:'Status',type:'select',options:['active','completed','paused','abandoned']},
+    {name:'notes',label:'Notes',type:'textarea'}
+  ]},
+  ideas: { title:'💡 Add Idea', sheet:'Ideas', fields:[
+    {name:'timestamp',label:'Date',type:'date',default:()=>new Date().toISOString().slice(0,10)},
+    {name:'category',label:'Category',type:'select',options:['product','content','business','tech','other']},
+    {name:'idea',label:'Idea',type:'textarea'},
+    {name:'status',label:'Status',type:'select',options:['new','exploring','in-progress','done','parked']}
+  ]},
+  olivia: { title:'❤️ Add for Olivia', sheet:'Olivia', fields:[
+    {name:'date',label:'Date',type:'date',default:()=>new Date().toISOString().slice(0,10)},
+    {name:'category',label:'Category',type:'select',options:['anniversary','birthday','preferences','gifts','memories']},
+    {name:'content',label:'Content',type:'textarea'},
+    {name:'notes',label:'Notes',type:'textarea'}
+  ]}
 };
 
-function openForm(type) {
+function openForm(type, prefill) {
   currentFormType = type;
   const form = FORMS[type];
-  document.getElementById('bsTitle').textContent = form.title;
+  const isEdit = !!prefill;
+  document.getElementById('bsTitle').textContent = isEdit ? form.title.replace('Add','Edit').replace('Log','Edit') : form.title;
   document.getElementById('bsFields').innerHTML = form.fields.map(f => {
-    const val = f.default ? f.default() : '';
+    const val = prefill ? (prefill[f.name]||'') : (f.default ? f.default() : '');
     if (f.type === 'textarea') return `<label>${f.label}</label><textarea id="bs_${f.name}" placeholder="${f.label}">${val}</textarea>`;
-    if (f.type === 'select') return `<label>${f.label}</label><select id="bs_${f.name}">${f.options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
-    return `<label>${f.label}</label><input type="${f.type}" id="bs_${f.name}" placeholder="${f.label}" value="${val}">`;
+    if (f.type === 'select') return `<label>${f.label}</label><select id="bs_${f.name}">${f.options.map(o=>`<option value="${o}"${val===o?' selected':''}>${o}</option>`).join('')}</select>`;
+    return `<label>${f.label}</label><input type="${f.type||'text'}" id="bs_${f.name}" placeholder="${f.label}" value="${val}">`;
   }).join('');
+  
+  document.getElementById('bsBtnRow').innerHTML = isEdit
+    ? `<button class="cancel-btn" onclick="closeForm()" style="flex:1">Cancel</button><button class="submit-btn" onclick="submitForm()" style="flex:1">Update</button>`
+    : `<button class="submit-btn" onclick="submitForm()">Save</button>`;
+  
   document.getElementById('bsOverlay').classList.add('active');
   document.getElementById('bsSheet').classList.add('active');
 }
@@ -903,62 +1111,352 @@ function openForm(type) {
 function closeForm() {
   document.getElementById('bsOverlay').classList.remove('active');
   document.getElementById('bsSheet').classList.remove('active');
+  editingId = null; editingSheet = null;
 }
 
 async function submitForm() {
   const form = FORMS[currentFormType];
-  const btn = document.getElementById('bsSubmit');
+  const btn = document.querySelector('#bsBtnRow .submit-btn');
   btn.disabled = true; btn.textContent = 'Saving...';
 
-  const data = { id: genId() };
-  form.fields.forEach(f => {
-    data[f.name] = document.getElementById('bs_' + f.name).value;
-  });
+  const data = {};
+  form.fields.forEach(f => { data[f.name] = document.getElementById('bs_'+f.name).value; });
 
-  // Extra fields
-  if (currentFormType === 'todo') { data.status = 'pending'; data.created = new Date().toISOString().slice(0,10); data.completed = ''; }
-  if (currentFormType === 'contact') { data.nextContact = ''; }
+  let res;
+  if (editingId) {
+    data.id = editingId;
+    res = await API.post('update', editingSheet || form.sheet, data, editingId);
+  } else {
+    data.id = genId();
+    if (currentFormType === 'todo') { data.status = 'pending'; data.created = new Date().toISOString().slice(0,10); }
+    res = await API.post('append', form.sheet, data);
+  }
 
-  const res = await API.post('append', form.sheet, data);
-  btn.disabled = false; btn.textContent = 'Save';
-
-  if (res && res.success) {
-    showToast('Added!');
+  btn.disabled = false; btn.textContent = editingId ? 'Update' : 'Save';
+  if (res?.success) {
+    showToast(editingId ? 'Updated!' : 'Added!');
     closeForm();
-    loadAllData();
-  } else if (!SB_CONFIG.API_URL) {
-    showToast('API not configured yet — deploy Apps Script first!', 'error');
+    loadTabData(currentTab, true);
+  } else {
+    showToast('Failed to save', 'error');
   }
 }
 
-// === Load Data from Sheets ===
+// === Quick Workout ===
+async function quickWorkout(type, label) {
+  const data = { id: genId(), date: new Date().toISOString().slice(0,10), type, exercise: label, sets:'', reps:'', weight:'', duration:'', notes:'Quick check-in' };
+  const res = await API.post('append', 'Fitness', data);
+  if (res?.success) { showToast('💪 ' + label + ' logged!'); loadTabData('fitness', true); }
+}
+
+// === Data Loading ===
+async function loadTabData(tab, force) {
+  switch(tab) {
+    case 'dashboard': loadQuickNotes(); loadTodos(); break;
+    case 'fitness': await loadFitness(force); break;
+    case 'olivia': updateOliviaCountdowns(); await loadOlivia(force); break;
+    case 'inventory': await loadInventory(force); break;
+    case 'finance': await loadFinance(force); break;
+    case 'reading': await loadReading(force); break;
+    case 'goals': await loadGoals(force); break;
+    case 'ideas': await loadIdeas(force); break;
+  }
+}
+
 async function loadTodos() {
   const data = await API.get('Todos');
-  if (!data || !data.rows || !data.rows.length) return; // keep hardcoded fallback
-  const container = document.getElementById('todosContainer');
-  const existing = container.innerHTML; // fallback
-  const html = data.rows.map(r =>
-    `<div class="todo"><span class="check ${r.status==='done'?'done':''}">` +
-    `${r.status==='done'?'✓':'○'}</span><div class="text">${r.text}</div></div>`
+  if (!data?.rows?.length) return;
+  document.getElementById('todosContainer').innerHTML = data.rows.map(r =>
+    `<div class="todo"><span class="check ${r.status==='done'?'done':''}">${r.status==='done'?'✓':'○'}</span><div class="text">${r.text}</div></div>`
   ).join('');
-  container.innerHTML = html || existing;
 }
 
-async function loadAllData() {
-  loadQuickNotes();
-  loadTodos();
+// === Fitness ===
+async function loadFitness(force) {
+  if (DATA.Fitness && !force) { renderFitness(); return; }
+  const data = await API.get('Fitness');
+  DATA.Fitness = data?.rows || [];
+  renderFitness();
 }
 
-// Init data loading
+function renderFitness() {
+  const rows = DATA.Fitness || [];
+  
+  // Stats
+  const now = new Date();
+  const weekStart = new Date(now); weekStart.setDate(now.getDate() - now.getDay());
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const ws = weekStart.toISOString().slice(0,10);
+  const ms = monthStart.toISOString().slice(0,10);
+  
+  document.getElementById('fitWeek').textContent = rows.filter(r => r.date >= ws).length;
+  document.getElementById('fitMonth').textContent = rows.filter(r => r.date >= ms).length;
+  
+  // Streak
+  let streak = 0;
+  const dates = [...new Set(rows.map(r=>r.date))].sort().reverse();
+  let check = new Date().toISOString().slice(0,10);
+  for (const d of dates) {
+    if (d === check) { streak++; const dt = new Date(check); dt.setDate(dt.getDate()-1); check = dt.toISOString().slice(0,10); }
+    else if (d < check) break;
+  }
+  document.getElementById('fitStreak').textContent = streak;
+  
+  // Calendar
+  renderFitCalendar(rows);
+  
+  // Log
+  renderRecords('fitnessLog', [...rows].reverse().slice(0,20), 'Fitness', r => {
+    const icons = {run:'🏃',strength:'💪',pt:'🏋️',football:'⚽',tennis:'🎾',walk:'🚶',swim:'🏊',yoga:'🧘'};
+    return `<div class="record-title">${icons[r.type]||'🏅'} ${r.exercise||r.type}</div>
+      <div class="record-sub">${[r.sets&&r.sets+'sets',r.reps&&r.reps+'reps',r.weight&&r.weight+'kg',r.duration&&r.duration+'min'].filter(Boolean).join(' · ')||'Quick check-in'}</div>
+      <div class="record-meta">${r.date}${r.notes?' · '+r.notes:''}</div>`;
+  });
+}
+
+function renderFitCalendar(rows) {
+  const workoutDates = new Set(rows.map(r=>r.date));
+  const first = new Date(calYear, calMonth, 1);
+  const last = new Date(calYear, calMonth + 1, 0);
+  const today = new Date().toISOString().slice(0,10);
+  
+  document.getElementById('calMonthLabel').textContent = first.toLocaleDateString('en-AU',{month:'long',year:'numeric'});
+  
+  let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="fit-cal-header">${d}</div>`).join('');
+  for (let i = 0; i < first.getDay(); i++) html += '<div class="fit-cal-day empty"></div>';
+  for (let d = 1; d <= last.getDate(); d++) {
+    const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = ds === today;
+    const hasW = workoutDates.has(ds);
+    html += `<div class="fit-cal-day${isToday?' today':''}${hasW?' has-workout':''}">${d}</div>`;
+  }
+  document.getElementById('fitCalendar').innerHTML = html;
+}
+
+function changeCalMonth(delta) {
+  calMonth += delta;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderFitCalendar(DATA.Fitness || []);
+}
+
+// === Olivia ===
+async function loadOlivia(force) {
+  if (DATA.Olivia && !force) { renderOlivia(); return; }
+  const data = await API.get('Olivia');
+  DATA.Olivia = data?.rows || [];
+  renderOlivia();
+}
+function renderOlivia(filter='all') {
+  const rows = filter === 'all' ? (DATA.Olivia||[]) : (DATA.Olivia||[]).filter(r=>(r.category||'').toLowerCase()===filter);
+  renderRecords('oliviaList', [...rows].reverse(), 'Olivia', r => {
+    const icons = {anniversary:'💒',birthday:'🎂',preferences:'⭐',gifts:'🎁',memories:'💝'};
+    return `<div class="record-title">${icons[r.category]||'❤️'} ${r.content?.slice(0,60)||'...'}</div>
+      <div class="record-sub">${r.category||''}</div>
+      <div class="record-meta">${r.date||''}${r.notes?' · '+r.notes:''}</div>`;
+  });
+}
+function filterOlivia(cat, el) {
+  document.querySelectorAll('#oliviaFilters .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderOlivia(cat);
+}
+
+// === Inventory ===
+async function loadInventory(force) {
+  if (DATA.Inventory && !force) { renderInventory(); return; }
+  const data = await API.get('Inventory');
+  DATA.Inventory = data?.rows || [];
+  renderInventory();
+}
+function renderInventory(filter='all') {
+  const rows = filter === 'all' ? (DATA.Inventory||[]) : (DATA.Inventory||[]).filter(r=>(r.category||'').toLowerCase()===filter);
+  renderRecords('inventoryList', rows, 'Inventory', r => {
+    const qty = parseInt(r.quantity)||0;
+    const threshold = parseInt((r.notes||'').match(/threshold[:\s]*(\d+)/i)?.[1]) || 2;
+    const low = qty <= threshold;
+    return `<div class="record-title">${r.item} <span class="${low?'low-stock':''}" style="font-size:12px;${low?'':'color:var(--muted)'}">×${qty}</span></div>
+      <div class="record-sub">📍 ${r.location||'—'} · ${r.category||''}</div>
+      <div class="record-meta">Last checked: ${r.lastChecked||'—'}</div>`;
+  });
+}
+function filterInventory(cat, el) {
+  document.querySelectorAll('#invFilters .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderInventory(cat);
+}
+
+// === Finance ===
+async function loadFinance(force) {
+  if (DATA.Finance && !force) { renderFinance(); return; }
+  const data = await API.get('Finance');
+  DATA.Finance = data?.rows || [];
+  renderFinance();
+}
+function renderFinance(filter='all') {
+  const rows = DATA.Finance || [];
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const monthRows = rows.filter(r => (r.date||'').startsWith(thisMonth));
+  
+  const income = monthRows.filter(r=>r.type==='income').reduce((s,r)=>s+parseFloat(r.amount||0),0);
+  const expense = monthRows.filter(r=>r.type==='expense').reduce((s,r)=>s+parseFloat(r.amount||0),0);
+  
+  document.getElementById('finIncome').textContent = '$' + income.toLocaleString();
+  document.getElementById('finExpense').textContent = '$' + expense.toLocaleString();
+  const net = income - expense;
+  const netEl = document.getElementById('finNet');
+  netEl.textContent = (net >= 0 ? '+$' : '-$') + Math.abs(net).toLocaleString();
+  netEl.style.color = net >= 0 ? 'var(--green)' : 'var(--red)';
+  
+  // Pie chart
+  renderPieChart(monthRows.filter(r=>r.type==='expense'));
+  
+  // List
+  const filtered = filter === 'all' ? rows : rows.filter(r=>r.type===filter);
+  renderRecords('financeList', [...filtered].reverse().slice(0,30), 'Finance', r => {
+    const isIncome = r.type === 'income';
+    return `<div class="record-title">${r.description||r.category} <span style="color:${isIncome?'var(--green)':'var(--red)'}; font-size:13px">${isIncome?'+':'-'}$${parseFloat(r.amount||0).toLocaleString()}</span></div>
+      <div class="record-sub">${r.category||''} · ${r.account||''}</div>
+      <div class="record-meta">${r.date||''}</div>`;
+  });
+}
+function filterFinance(cat, el) {
+  document.querySelectorAll('#finFilters .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderFinance(cat);
+}
+
+function renderPieChart(expenses) {
+  const container = document.getElementById('pieContainer');
+  if (!expenses.length) { container.innerHTML = '<div style="color:var(--muted);font-size:13px">No expenses this month</div>'; return; }
+  
+  const cats = {};
+  expenses.forEach(r => { cats[r.category||'other'] = (cats[r.category||'other']||0) + parseFloat(r.amount||0); });
+  const total = Object.values(cats).reduce((a,b)=>a+b,0);
+  const colors = ['#2ECC85','#6B4C9A','#3498db','#f39c12','#e74c3c','#ec4899','#14b8a6','#8b5cf6'];
+  
+  let gradient = '';
+  let offset = 0;
+  const entries = Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  entries.forEach(([cat, amt], i) => {
+    const pct = (amt/total)*100;
+    const color = colors[i%colors.length];
+    gradient += `${color} ${offset}% ${offset+pct}%,`;
+    offset += pct;
+  });
+  
+  container.innerHTML = `
+    <div class="pie" style="background:conic-gradient(${gradient.slice(0,-1)})"></div>
+    <div class="pie-legend">${entries.map(([cat,amt],i) => 
+      `<div class="pie-legend-item"><div class="dot" style="background:${colors[i%colors.length]}"></div>${cat} $${amt.toLocaleString()} (${Math.round(amt/total*100)}%)</div>`
+    ).join('')}</div>`;
+}
+
+// === Reading ===
+async function loadReading(force) {
+  if (DATA.Reading && !force) { renderReading(); return; }
+  const data = await API.get('Reading');
+  DATA.Reading = data?.rows || [];
+  renderReading();
+}
+function renderReading(filter='all') {
+  const rows = filter === 'all' ? (DATA.Reading||[]) : (DATA.Reading||[]).filter(r=>(r.status||'').toLowerCase()===filter);
+  renderRecords('readingList', [...rows].reverse(), 'Reading', r => {
+    const stars = r.rating ? '⭐'.repeat(Math.min(parseInt(r.rating),5)) : '';
+    const statusColors = {reading:'var(--green)',finished:'var(--blue)',wishlist:'var(--orange)',abandoned:'var(--muted)'};
+    return `<div class="record-title">${r.title||'Untitled'} ${stars}</div>
+      <div class="record-sub">by ${r.author||'—'} · ${r.type||'book'} · <span style="color:${statusColors[r.status]||'var(--muted)'}">${r.status||''}</span></div>
+      <div class="record-meta">${r.date||''}${r.notes?' · '+r.notes:''}</div>`;
+  });
+}
+function filterReading(cat, el) {
+  document.querySelectorAll('#readFilters .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderReading(cat);
+}
+
+// === Goals ===
+async function loadGoals(force) {
+  if (DATA.Goals && !force) { renderGoals(); return; }
+  const data = await API.get('Goals');
+  DATA.Goals = data?.rows || [];
+  renderGoals();
+}
+function renderGoals(filter='all') {
+  const rows = filter === 'all' ? (DATA.Goals||[]) : (DATA.Goals||[]).filter(r=>(r.category||'').toLowerCase()===filter);
+  renderRecords('goalsList', rows, 'Goals', r => {
+    const statusColors = {active:'var(--green)',completed:'var(--blue)',paused:'var(--orange)',abandoned:'var(--muted)'};
+    const progress = r.current && r.target ? `${r.current} / ${r.target}` : '';
+    return `<div class="record-title">${r.title||'Untitled'} <span style="color:${statusColors[r.status]||'var(--muted)'}; font-size:11px">${r.status||''}</span></div>
+      <div class="record-sub">${r.category||''} ${progress ? ' · '+progress : ''} ${r.deadline ? ' · Due '+r.deadline : ''}</div>
+      <div class="record-meta">${r.notes||''}</div>`;
+  });
+}
+function filterGoals(cat, el) {
+  document.querySelectorAll('#goalFilters .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderGoals(cat);
+}
+
+// === Ideas ===
+async function loadIdeas(force) {
+  if (DATA.Ideas && !force) { renderIdeas(); return; }
+  const data = await API.get('Ideas');
+  DATA.Ideas = data?.rows || [];
+  renderIdeas();
+}
+function renderIdeas(filter='all') {
+  const rows = filter === 'all' ? (DATA.Ideas||[]) : (DATA.Ideas||[]).filter(r=>(r.category||'').toLowerCase()===filter);
+  renderRecords('ideasList', [...rows].reverse(), 'Ideas', r => {
+    const statusColors = {'new':'var(--green)',exploring:'var(--blue)','in-progress':'var(--orange)',done:'var(--muted)',parked:'var(--muted)'};
+    return `<div class="record-title">${(r.idea||'').slice(0,80)}${(r.idea||'').length>80?'...':''}</div>
+      <div class="record-sub">${r.category||''} · <span style="color:${statusColors[r.status]||'var(--muted)'}">${r.status||'new'}</span></div>
+      <div class="record-meta">${r.timestamp||''}</div>`;
+  });
+}
+function filterIdeas(cat, el) {
+  document.querySelectorAll('#ideaFilters .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderIdeas(cat);
+}
+
+// === Search ===
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+searchInput.addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  if (!q) { searchResults.classList.remove('active'); return; }
+  
+  // Search across all cached data
+  const results = [];
+  Object.entries(DATA).forEach(([sheet, rows]) => {
+    (rows||[]).forEach(r => {
+      const text = Object.values(r).join(' ').toLowerCase();
+      if (text.includes(q)) results.push({ cat: sheet, title: r.title||r.item||r.idea||r.exercise||r.description||r.content||'', text });
+    });
+  });
+  
+  if (!results.length) { searchResults.classList.remove('active'); return; }
+  searchResults.innerHTML = results.slice(0,8).map(m =>
+    `<div class="search-item"><div class="cat">${m.cat}</div><div class="title">${m.title.slice(0,50)}</div></div>`
+  ).join('');
+  searchResults.classList.add('active');
+});
+document.addEventListener('click', e => { if (!e.target.closest('.search-wrap')) searchResults.classList.remove('active'); });
+
+// === Init ===
+updateDate();
+updateCountdowns();
+setInterval(updateDate, 60000);
+
 if (typeof SB_CONFIG !== 'undefined' && SB_CONFIG.API_URL) {
-  document.addEventListener('DOMContentLoaded', loadAllData);
-  // Also try if DOM already loaded
-  if (document.readyState !== 'loading') loadAllData();
+  const init = () => { loadQuickNotes(); loadTodos(); };
+  if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 } else {
-  // No API configured — clear skeleton
   document.addEventListener('DOMContentLoaded', () => {
-    const qnList = document.getElementById('qnList');
-    if (qnList) qnList.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">📡 Connect Google Sheets to enable — see DEPLOY.md</div>';
+    const qn = document.getElementById('qnList');
+    if (qn) qn.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">📡 Connect Google Sheets to enable</div>';
   });
 }
 </script>
