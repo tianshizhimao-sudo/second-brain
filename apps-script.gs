@@ -12,6 +12,16 @@ function doGet(e) {
   const sheet = e.parameter.sheet;
   if (!sheet) return jsonResponse({ error: 'Missing sheet parameter' });
 
+  // Special route: CalendarEvents returns today's Google Calendar events
+  if (sheet === 'CalendarEvents') {
+    try {
+      var events = getCalendarEvents();
+      return jsonResponse({ rows: events });
+    } catch (err) {
+      return jsonResponse({ error: err.message });
+    }
+  }
+
   try {
     const ss = SpreadsheetApp.openById(SHEET_ID);
     const ws = ss.getSheetByName(sheet);
@@ -82,6 +92,35 @@ function doPost(e) {
   } catch (err) {
     return jsonResponse({ error: err.message });
   }
+}
+
+/**
+ * Get today's calendar events for the primary calendar
+ * Called via GET: ?key=xxx&sheet=CalendarEvents
+ */
+function getCalendarEvents() {
+  var now = new Date();
+  var start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+  var end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+  
+  var calendar = CalendarApp.getDefaultCalendar();
+  var events = calendar.getEvents(start, end);
+  
+  var result = events.map(function(ev) {
+    return {
+      title: ev.getTitle(),
+      start: ev.getStartTime().toISOString(),
+      end: ev.getEndTime().toISOString(),
+      allDay: ev.isAllDayEvent(),
+      description: ev.getDescription() || '',
+      location: ev.getLocation() || ''
+    };
+  });
+  
+  // Sort by start time
+  result.sort(function(a, b) { return new Date(a.start) - new Date(b.start); });
+  
+  return result;
 }
 
 function jsonResponse(data, code) {

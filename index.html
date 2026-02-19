@@ -103,6 +103,12 @@ a{color:var(--green);text-decoration:none}
 .schedule-item.highlight{background:rgba(46,204,133,.08);border-radius:8px;padding:8px 10px;margin:-2px -10px}
 .schedule-item.past .schedule-time{color:var(--muted);text-decoration:line-through}
 .schedule-item.past .schedule-title{color:var(--muted)}
+.today-extra{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:13px;color:var(--muted)}
+.today-extra .extra-item{display:flex;align-items:center;gap:4px}
+.today-extra .weather-temp{font-size:18px;font-weight:700;color:var(--green)}
+.almanac-row{margin-top:8px;font-size:12px;line-height:1.8}
+.almanac-row .yi{color:var(--green)}
+.almanac-row .ji{color:var(--red)}
 
 /* Refresh button */
 .refresh-btn{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 8px;transition:.3s}
@@ -206,6 +212,9 @@ a{color:var(--green);text-decoration:none}
 .qn-item.from-dong{background:rgba(46,204,133,.1);border-left:3px solid var(--green)}
 .qn-item.from-oney{background:rgba(107,76,154,.1);border-left:3px solid var(--purple)}
 .qn-item .qn-meta{font-size:11px;color:var(--muted);white-space:nowrap}
+.qn-item .qn-del{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:2px 4px;opacity:0.4;transition:.2s;flex-shrink:0}
+.qn-item .qn-del:hover{opacity:1;color:var(--red)}
+.qn-item:hover .qn-del{opacity:0.7}
 
 /* Toast */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 24px;font-size:14px;z-index:600;transition:transform .3s;box-shadow:0 4px 16px rgba(0,0,0,.3)}
@@ -430,14 +439,17 @@ a{color:var(--green);text-decoration:none}
   <div class="card" style="margin-bottom:16px">
     <div style="font-size:24px;font-weight:700" id="todayDate"></div>
     <div style="color:var(--muted);margin-top:4px" id="todayGreeting"></div>
+    <div class="today-extra">
+      <span class="extra-item" id="lunarDate">🌙 ...</span>
+      <span class="extra-item" id="weatherInfo">🌡️ ...</span>
+    </div>
+    <div class="almanac-row" id="almanacInfo"></div>
   </div>
 
   <div class="section-title">📅 Today's Schedule</div>
   <div class="card" style="margin-bottom:16px" id="scheduleContainer">
-    <div class="schedule-item past"><span class="schedule-time">10:30</span><span class="schedule-title">🌿 恢复休息 1</span></div>
-    <div class="schedule-item past"><span class="schedule-time">14:30</span><span class="schedule-title">🌿 恢复休息 2</span></div>
-    <div class="schedule-item past"><span class="schedule-time">16:20</span><span class="schedule-title">🌿 恢复休息 3</span></div>
-    <div class="schedule-item highlight"><span class="schedule-time">21:30</span><span class="schedule-title">🏋️ PT Andy</span></div>
+    <div class="skeleton" style="width:80%"></div>
+    <div class="skeleton" style="width:60%"></div>
   </div>
 
   <div class="section-title">⏳ Countdowns</div>
@@ -976,7 +988,7 @@ async function loadQuickNotes() {
   const list = document.getElementById('qnList');
   if (!data?.rows?.length) { list.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">No notes yet. Say something!</div>'; return; }
   list.innerHTML = data.rows.slice(-10).reverse().map(r =>
-    `<div class="qn-item from-${(r.from||'dong').toLowerCase()}"><span>${r.note}</span><span class="qn-meta">${r.from||''} · ${(r.timestamp||'').slice(0,16)}</span></div>`
+    `<div class="qn-item from-${(r.from||'dong').toLowerCase()}"><span>${r.note}</span><span class="qn-meta">${r.from||''} · ${(r.timestamp||'').slice(0,16)}</span><button class="qn-del" onclick="deleteQuickNote('${r.id}')" title="删除">🗑️</button></div>`
   ).join('');
 }
 
@@ -1176,7 +1188,7 @@ async function quickWorkout(type, label) {
 // === Data Loading ===
 async function loadTabData(tab, force) {
   switch(tab) {
-    case 'dashboard': loadQuickNotes(); loadTodos(); break;
+    case 'dashboard': loadQuickNotes(); loadTodos(); loadSchedule(); break;
     case 'fitness': await loadFitness(force); break;
     case 'olivia': updateOliviaCountdowns(); await loadOlivia(force); break;
     case 'inventory': await loadInventory(force); break;
@@ -1485,13 +1497,190 @@ searchInput.addEventListener('input', function() {
 });
 document.addEventListener('click', e => { if (!e.target.closest('.search-wrap')) searchResults.classList.remove('active'); });
 
+// === QuickNotes Delete ===
+function deleteQuickNote(id) {
+  openDeleteModal(id, 'QuickNotes');
+  // Override confirmDelete temporarily to reload quick notes
+  const origConfirm = window._origConfirmDelete;
+  if (!origConfirm) {
+    window._origConfirmDelete = confirmDelete;
+  }
+}
+// Patch confirmDelete to also reload quicknotes
+const _baseConfirmDelete = confirmDelete;
+confirmDelete = async function() {
+  if (!deleteId || !deleteSheet) return;
+  const sheet = deleteSheet;
+  const res = await API.post('delete', deleteSheet, null, deleteId);
+  closeDeleteModal();
+  if (res && res.success) {
+    showToast('已删除');
+    await new Promise(r => setTimeout(r, 1500));
+    if (sheet === 'QuickNotes') loadQuickNotes();
+    else loadTabData(currentTab, true);
+  } else showToast('Delete failed', 'error');
+};
+
+// === Google Calendar Schedule ===
+async function loadSchedule() {
+  const container = document.getElementById('scheduleContainer');
+  try {
+    const data = await API.get('CalendarEvents');
+    if (!data?.rows?.length) {
+      container.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">No events today 🎉</div>';
+      return;
+    }
+    const now = new Date();
+    container.innerHTML = data.rows.map(ev => {
+      const start = new Date(ev.start);
+      const isPast = start < now;
+      const timeStr = ev.allDay ? 'All Day' : start.toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Australia/Sydney' });
+      return `<div class="schedule-item${isPast?' past':''}"><span class="schedule-time">${timeStr}</span><span class="schedule-title">${ev.title}</span></div>`;
+    }).join('');
+  } catch(e) {
+    container.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">📡 Calendar unavailable</div>';
+  }
+}
+
+// === Lunar Calendar (Pure JS) ===
+function solarToLunar(year, month, day) {
+  // Lunar calendar data 1900-2100
+  const lunarInfo = [
+    0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
+    0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
+    0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
+    0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,
+    0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,
+    0x06ca0,0x0b550,0x15355,0x04da0,0x0a5b0,0x14573,0x052b0,0x0a9a8,0x0e950,0x06aa0,
+    0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,
+    0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b6a0,0x195a6,
+    0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,
+    0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x05ac0,0x0ab60,0x096d5,0x092e0,
+    0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,
+    0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,
+    0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,
+    0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,
+    0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0,
+    0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,0x06b20,0x1a6c4,0x0aae0,
+    0x092e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,0x056a0,0x0a6d0,0x055d4,
+    0x052d0,0x0a9b8,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,0x0aba4,0x0a5b0,0x052b0,
+    0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,0x0a570,0x054e4,0x0d160,
+    0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,0x0a4d0,0x0d150,0x0f252,
+    0x0d520
+  ];
+  const Gan = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+  const Zhi = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  const Animals = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+  const lunarMonths = ['正','二','三','四','五','六','七','八','九','十','冬','腊'];
+  const lunarDays = ['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+
+  function lYearDays(y) {
+    let sum = 348;
+    for (let i = 0x8000; i > 0x8; i >>= 1) sum += (lunarInfo[y-1900] & i) ? 1 : 0;
+    return sum + leapDays(y);
+  }
+  function leapMonth(y) { return lunarInfo[y-1900] & 0xf; }
+  function leapDays(y) {
+    if (leapMonth(y)) return (lunarInfo[y-1900] & 0x10000) ? 30 : 29;
+    return 0;
+  }
+  function monthDays(y, m) { return (lunarInfo[y-1900] & (0x10000 >> m)) ? 30 : 29; }
+
+  let offset = Math.floor((Date.UTC(year, month-1, day) - Date.UTC(1900, 0, 31)) / 86400000);
+  let lYear = 1900, lMonth, lDay, isLeap = false;
+
+  for (let i = 1900; i < 2101 && offset > 0; i++) { let tmp = lYearDays(i); offset -= tmp; lYear = i; }
+  if (offset < 0) { offset += lYearDays(lYear); lYear--; }
+
+  let leap = leapMonth(lYear);
+  for (let i = 1; i < 13 && offset > 0; i++) {
+    if (leap > 0 && i === (leap + 1) && !isLeap) { --i; isLeap = true; let tmp = leapDays(lYear); if (offset < tmp) { lMonth = i; lDay = offset + 1; break; } offset -= tmp; isLeap = false; }
+    let tmp = monthDays(lYear, i);
+    if (offset < tmp) { lMonth = i; lDay = offset + 1; break; }
+    offset -= tmp;
+  }
+  if (!lMonth) { lMonth = 1; lDay = offset + 1; }
+
+  const ganIdx = (lYear - 4) % 10;
+  const zhiIdx = (lYear - 4) % 12;
+
+  return {
+    lunarYear: lYear,
+    lunarMonth: lMonth,
+    lunarDay: lDay || 1,
+    isLeap,
+    ganZhi: Gan[ganIdx] + Zhi[zhiIdx] + '年',
+    animal: Animals[zhiIdx],
+    monthStr: (isLeap ? '闰' : '') + lunarMonths[lMonth - 1] + '月',
+    dayStr: lunarDays[(lDay || 1) - 1]
+  };
+}
+
+// === Weather (Open-Meteo, Sydney) ===
+async function loadWeather() {
+  try {
+    const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-33.87&longitude=151.21&current=temperature_2m,weather_code&timezone=Australia%2FSydney');
+    const d = await r.json();
+    const temp = Math.round(d.current.temperature_2m);
+    const code = d.current.weather_code;
+    const icons = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌧️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'🌨️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+    const icon = icons[code] || '🌡️';
+    document.getElementById('weatherInfo').innerHTML = `${icon} <span class="weather-temp">${temp}°C</span> Sydney`;
+  } catch(e) {
+    document.getElementById('weatherInfo').textContent = '🌡️ Weather unavailable';
+  }
+}
+
+// === 黄历 (Chinese Almanac) ===
+function getAlmanac(year, month, day) {
+  const yiOptions = ['祭祀','出行','纳财','开市','动土','安葬','嫁娶','修造','栽种','开光','入宅','破土','求嗣','安床','赴任','祈福','装修','搬家','求医','交易','立券','挂匾','沐浴','冠笄','会亲友','造屋','合帐'];
+  const jiOptions = ['诉讼','出行','动土','嫁娶','安葬','开市','入宅','修造','破土','移徙','开仓','祭祀','栽种','安床','造船','求嗣','上梁','竖柱','纳畜','伐木','盖屋','作灶','治病','词讼','打官司'];
+  
+  // Use date as seed for deterministic but varying results
+  const seed = year * 10000 + month * 100 + day;
+  function seededRand(s, i) { let x = Math.sin(s + i * 9301 + 49297) * 233280; return x - Math.floor(x); }
+  
+  const yiCount = 3 + Math.floor(seededRand(seed, 1) * 3);
+  const jiCount = 3 + Math.floor(seededRand(seed, 2) * 3);
+  
+  const yi = [], ji = [];
+  const usedYi = new Set(), usedJi = new Set();
+  for (let i = 0; yi.length < yiCount; i++) {
+    const idx = Math.floor(seededRand(seed, 10 + i) * yiOptions.length);
+    if (!usedYi.has(idx)) { usedYi.add(idx); yi.push(yiOptions[idx]); }
+  }
+  for (let i = 0; ji.length < jiCount; i++) {
+    const idx = Math.floor(seededRand(seed, 50 + i) * jiOptions.length);
+    if (!usedJi.has(idx)) { usedJi.add(idx); ji.push(jiOptions[idx]); }
+  }
+  
+  return { yi, ji };
+}
+
+function updateLunarAndAlmanac() {
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth() + 1, d = now.getDate();
+  
+  // Lunar
+  const lunar = solarToLunar(y, m, d);
+  document.getElementById('lunarDate').textContent = `🌙 ${lunar.ganZhi} ${lunar.animal}年 ${lunar.monthStr}${lunar.dayStr}`;
+  
+  // Almanac
+  const alm = getAlmanac(y, m, d);
+  document.getElementById('almanacInfo').innerHTML = `<span class="yi">宜：${alm.yi.join(' · ')}</span><br><span class="ji">忌：${alm.ji.join(' · ')}</span>`;
+}
+
 // === Init ===
 updateDate();
 updateCountdowns();
 setInterval(updateDate, 60000);
 
+// Lunar + Weather + Almanac (no API dependency)
+updateLunarAndAlmanac();
+loadWeather();
+
 if (typeof SB_CONFIG !== 'undefined' && SB_CONFIG.API_URL) {
-  const init = () => { loadQuickNotes(); loadTodos(); };
+  const init = () => { loadQuickNotes(); loadTodos(); loadSchedule(); };
   if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 } else {
   document.addEventListener('DOMContentLoaded', () => {
