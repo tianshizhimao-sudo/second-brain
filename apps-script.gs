@@ -22,6 +22,16 @@ function doGet(e) {
     }
   }
 
+  // Special route: Bookkeeping reads from both company + family accounting sheets
+  if (sheet === 'Bookkeeping') {
+    try {
+      var result = getBookkeeping();
+      return jsonResponse({ rows: result });
+    } catch (err) {
+      return jsonResponse({ error: err.message });
+    }
+  }
+
   try {
     const ss = SpreadsheetApp.openById(SHEET_ID);
     const ws = ss.getSheetByName(sheet);
@@ -121,6 +131,52 @@ function getCalendarEvents() {
   result.sort(function(a, b) { return new Date(a.start) - new Date(b.start); });
   
   return result;
+}
+
+/**
+ * Get bookkeeping data from company + family sheets
+ */
+function getBookkeeping() {
+  var COMPANY_SHEET = '1Gv1sjrWnFW9K7f1dfe9uyWEvQbl0aTsifM3TXoALHXQ';
+  var FAMILY_SHEET = '1F1k1OWYEbrNjmlqzskgK50J0y5yt02R-j6iqYNwrXQg';
+  
+  function readSheet(sheetId, account) {
+    try {
+      var ss = SpreadsheetApp.openById(sheetId);
+      var ws = ss.getSheets()[0]; // first sheet
+      var data = ws.getDataRange().getValues();
+      if (data.length <= 1) return [];
+      var headers = data[0];
+      return data.slice(1).map(function(row) {
+        var obj = { account: account };
+        headers.forEach(function(h, i) { obj[h] = row[i]; });
+        return obj;
+      });
+    } catch(e) { return []; }
+  }
+  
+  var company = readSheet(COMPANY_SHEET, 'company');
+  var family = readSheet(FAMILY_SHEET, 'family');
+  var all = company.concat(family);
+  
+  // Sort by date descending
+  all.sort(function(a, b) { return (b['日期']||'') > (a['日期']||'') ? 1 : -1; });
+  
+  // Normalize to English keys
+  return all.map(function(r) {
+    return {
+      date: r['日期'] || '',
+      type: r['类型'] === '收入' ? 'income' : 'expense',
+      category: r['分类'] || '',
+      description: r['描述'] || '',
+      amount: Math.abs(parseFloat(r['金额']) || 0),
+      gst: parseFloat(r['GST']) || 0,
+      net: Math.abs(parseFloat(r['Net']) || 0),
+      payment: r['付款方式'] || '',
+      notes: r['备注'] || '',
+      account: r.account
+    };
+  });
 }
 
 function jsonResponse(data, code) {

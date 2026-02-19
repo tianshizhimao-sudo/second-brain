@@ -764,6 +764,8 @@ a{color:var(--green);text-decoration:none}
   <!-- Filter -->
   <div class="filter-chips" id="finFilters">
     <span class="chip active" onclick="filterFinance('all',this)">All</span>
+    <span class="chip" onclick="filterFinance('company',this)">🏢 Company</span>
+    <span class="chip" onclick="filterFinance('family',this)">🏠 Family</span>
     <span class="chip" onclick="filterFinance('income',this)">💚 Income</span>
     <span class="chip" onclick="filterFinance('expense',this)">🔴 Expense</span>
   </div>
@@ -865,7 +867,7 @@ function switchTab(id, el) {
   currentTab = id;
   
   // Show FAB for tabs that support adding
-  const fabTabs = ['fitness','olivia','inventory','finance','reading','goals','ideas'];
+  const fabTabs = ['fitness','olivia','inventory','reading','goals','ideas'];
   const fab = document.getElementById('fab');
   fab.classList.toggle('visible', fabTabs.includes(id));
   
@@ -1338,10 +1340,10 @@ function filterInventory(cat, el) {
   renderInventory(cat);
 }
 
-// === Finance ===
+// === Finance (read-only from Bookkeeping sheets) ===
 async function loadFinance(force) {
   if (DATA.Finance && !force) { renderFinance(); return; }
-  const data = await API.get('Finance');
+  const data = await API.get('Bookkeeping');
   DATA.Finance = data?.rows || [];
   renderFinance();
 }
@@ -1365,13 +1367,20 @@ function renderFinance(filter='all') {
   renderPieChart(monthRows.filter(r=>r.type==='expense'));
   
   // List
-  const filtered = filter === 'all' ? rows : rows.filter(r=>r.type===filter);
-  renderRecords('financeList', [...filtered].reverse().slice(0,30), 'Finance', r => {
+  let filtered = filter === 'all' ? rows : filter === 'company' || filter === 'family' ? rows.filter(r=>r.account===filter) : rows.filter(r=>r.type===filter);
+  const container = document.getElementById('financeList');
+  if (!filtered.length) { container.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No records yet</div>'; return; }
+  container.innerHTML = filtered.slice(0,50).map(r => {
     const isIncome = r.type === 'income';
-    return `<div class="record-title">${r.description||r.category} <span style="color:${isIncome?'var(--green)':'var(--red)'}; font-size:13px">${isIncome?'+':'-'}$${parseFloat(r.amount||0).toLocaleString()}</span></div>
-      <div class="record-sub">${r.category||''} · ${r.account||''}</div>
-      <div class="record-meta">${r.date||''}</div>`;
-  });
+    const acctBadge = r.account === 'company' ? '🏢' : '🏠';
+    return `<div class="record-item">
+      <div class="record-main"><div class="record-body">
+        <div class="record-title">${r.description||r.category} <span style="color:${isIncome?'var(--green)':'var(--red)'}; font-size:13px">${isIncome?'+':'-'}$${parseFloat(r.amount||0).toLocaleString()}</span></div>
+        <div class="record-sub">${acctBadge} ${r.category||''} · ${r.payment||''}</div>
+        <div class="record-meta">${r.date||''}${r.notes?' · '+r.notes:''}</div>
+      </div></div>
+    </div>`;
+  }).join('');
 }
 function filterFinance(cat, el) {
   document.querySelectorAll('#finFilters .chip').forEach(c=>c.classList.remove('active'));
