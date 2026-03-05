@@ -472,7 +472,7 @@ a{color:var(--green);text-decoration:none}
     <div class="todo"><span class="check">○</span><div class="text">Connective Rafael — confirm commission split, trail ownership, commercial panel, clawback</div></div>
     <div class="todo"><span class="check">○</span><div class="text">Cert IV — send RPL email to Stuart (Kaplan $380)</div></div>
     <div class="todo"><span class="check">○</span><div class="text">Oney Analyse — decide deployment (tools sub-path vs standalone repo)</div></div>
-    <div class="todo"><span class="check">○</span><div class="text">Oney Security v1.1 — continue polishing, then deploy</div></div>
+    <div class="todo"><span class="check">○</span><div class="text">Oney Security v1.8.3 — continue polishing, then deploy</div></div>
     <div class="todo"><span class="check">○</span><div class="text">Twenty CRM — migrate from Google Sheets</div></div>
     <div class="todo"><span class="check done">✓</span><div class="text">Humanizer pass — 22 changes across all site pages</div></div>
     <div class="todo"><span class="check done">✓</span><div class="text">Site review fixes — OG tags, canonical URLs, sitemap</div></div>
@@ -651,8 +651,8 @@ a{color:var(--green);text-decoration:none}
   <div class="section-title">🗺️ Oney & Co 6-Month Roadmap</div>
   <div class="card" style="margin-bottom:16px">
     <div class="timeline">
-      <div class="tl-item current"><div class="month">Feb 2026</div><div class="tasks">Cert IV 申请 (Kaplan RPL $380) · 产品打磨 · 内容制作</div></div>
-      <div class="tl-item future"><div class="month">Mar 2026</div><div class="tasks">注册公司 · 💒 结婚纪念日 3/5</div></div>
+      <div class="tl-item"><div class="month">Feb 2026</div><div class="tasks">Cert IV 申请 (Kaplan RPL $380) · 产品打磨 · 内容制作</div></div>
+      <div class="tl-item current"><div class="month">Mar 2026</div><div class="tasks">注册公司 · 💒 结婚纪念日 3/5 · 产品定价确认</div></div>
       <div class="tl-item future"><div class="month">Apr 2026</div><div class="tasks">签 Aggregator (YBR/Connective) · 评估离职时机</div></div>
       <div class="tl-item future"><div class="month">May 2026</div><div class="tasks">ACR 申请 · 🇸🇬 新加坡旅行</div></div>
       <div class="tl-item future"><div class="month">Jun 2026</div><div class="tasks">营销启动 · 🇨🇳🇯🇵 中国+日本 6/12-6/30 · 🎂 Oli 生日 6/17</div></div>
@@ -662,12 +662,12 @@ a{color:var(--green);text-decoration:none}
 
   <div class="section-title">📦 Product Matrix</div>
   <div class="grid grid-3" style="margin-bottom:16px">
-    <div class="product-card"><div class="icon">📊</div><div class="pname">Oney Assess</div><div class="price">Free / $149</div><div class="pstatus status-live">Live</div></div>
-    <div class="product-card"><div class="icon">📈</div><div class="pname">Oney Analyse</div><div class="price">Free / $199 / $349</div><div class="pstatus status-dev">Polishing</div></div>
-    <div class="product-card"><div class="icon">🛡️</div><div class="pname">Oney Security</div><div class="price">Free / $79mo / $299mo</div><div class="pstatus status-dev">v1.1 Dev</div></div>
-    <div class="product-card"><div class="icon">🔒</div><div class="pname">Oney Secure</div><div class="price">$99</div><div class="pstatus status-live">Live</div></div>
-    <div class="product-card"><div class="icon">💼</div><div class="pname">Oney Serve</div><div class="price">$149</div><div class="pstatus status-live">Live</div></div>
-    <div class="product-card"><div class="icon">⭐</div><div class="pname">Oney Pro Suite</div><div class="price">$49/mo · $399/yr</div><div class="pstatus status-plan">Planned</div></div>
+    <div class="product-card"><div class="icon">🛡️</div><div class="pname">Oney Security</div><div class="price">v1.8.3 · Price TBD</div><div class="pstatus status-live">Standalone</div></div>
+    <div class="product-card"><div class="icon">📄</div><div class="pname">Oney Credit Paper</div><div class="price">v3.1 · Price TBD</div><div class="pstatus status-live">Standalone</div></div>
+    <div class="product-card"><div class="icon">⭐</div><div class="pname">Oney Pro Suite</div><div class="price">$49/mo · $449/yr</div><div class="pstatus status-dev">Bundle</div></div>
+    <div class="product-card"><div class="icon">📊</div><div class="pname">Oney Assess</div><div class="price">Free / $149</div><div class="pstatus status-live">Commercial Inv</div></div>
+    <div class="product-card"><div class="icon">📈</div><div class="pname">Oney Analyse</div><div class="price">Free / $199 / $349</div><div class="pstatus status-live">MLL</div></div>
+    <div class="product-card"><div class="icon">🏥</div><div class="pname">FHC</div><div class="price">Free</div><div class="pstatus status-live">Lead Gen</div></div>
   </div>
 
   <div class="section-title">🤖 Skills & ClawHub</div>
@@ -747,10 +747,18 @@ a{color:var(--green);text-decoration:none}
   <div class="section-title">💰 Finance Tracker</div>
   
   <!-- Monthly summary -->
-  <div class="grid grid-3" style="margin-bottom:16px">
+  <div style="font-size:13px;color:var(--muted);margin-bottom:8px" id="finMonthLabel">📅 This Month</div>
+  <div class="grid grid-3" style="margin-bottom:8px">
     <div class="card stat"><div class="num" id="finIncome" style="color:var(--green)">$0</div><div class="label">Income</div></div>
     <div class="card stat"><div class="num" id="finExpense" style="color:var(--red)">$0</div><div class="label">Expenses</div></div>
     <div class="card stat"><div class="num" id="finNet">$0</div><div class="label">Net</div></div>
+  </div>
+  <!-- All-time totals -->
+  <div style="font-size:13px;color:var(--muted);margin-bottom:8px">📊 All Time</div>
+  <div class="grid grid-3" style="margin-bottom:16px">
+    <div class="card stat"><div class="num" id="finTotalIncome" style="color:var(--green);font-size:20px">$0</div><div class="label">Total Income</div></div>
+    <div class="card stat"><div class="num" id="finTotalExpense" style="color:var(--red);font-size:20px">$0</div><div class="label">Total Expenses</div></div>
+    <div class="card stat"><div class="num" id="finTotalNet" style="font-size:20px">$0</div><div class="label">Total Net</div></div>
   </div>
 
   <!-- Pie chart -->
@@ -826,6 +834,38 @@ a{color:var(--green);text-decoration:none}
   <div id="ideasList">
     <div class="skeleton" style="width:90%"></div>
     <div class="skeleton" style="width:70%"></div>
+  </div>
+
+  <div class="section-title">💰 Passive Income Side Projects</div>
+  <div class="grid grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <h3><span class="emoji">📡</span> Lender Policy Radar</h3>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Weekly digest of lender policy changes for Brokers</div>
+      <div style="font-size:13px"><span style="color:var(--green);font-weight:600">$29-49/mo</span> subscription</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">Target: Mortgage Brokers</div>
+    </div>
+    <div class="card">
+      <h3><span class="emoji">🧲</span> Broker Lead Pre-Qualifier</h3>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Embeddable widget — pre-qualifies leads before they hit the broker</div>
+      <div style="font-size:13px"><span style="color:var(--green);font-weight:600">$99/mo</span> or <span style="color:var(--green);font-weight:600">$499</span> one-off</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">Target: Broker websites</div>
+    </div>
+    <div class="card">
+      <h3><span class="emoji">🏦</span> SME Bank-Ready Score</h3>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">One-off report telling SMEs how "bank-ready" they are for lending</div>
+      <div style="font-size:13px"><span style="color:var(--green);font-weight:600">$29</span> per report</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">Target: Small businesses</div>
+    </div>
+  </div>
+
+  <div class="section-title">🖥️ Side Projects</div>
+  <div class="grid grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <h3><span class="emoji">🤖</span> Mac Mini Home Server</h3>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Autonomous AI agent (Oney) running 24/7 on Mac Mini — home server + AI ops center</div>
+      <div style="font-size:12px;color:var(--muted)">Stack: OpenClaw · Skills · Cron · Automation</div>
+      <div style="margin-top:8px"><span style="color:var(--green);font-weight:600;font-size:12px">● Active</span></div>
+    </div>
   </div>
 </div>
 
@@ -1356,12 +1396,26 @@ function renderFinance(filter='all') {
   const income = monthRows.filter(r=>r.type==='income').reduce((s,r)=>s+parseFloat(r.amount||0),0);
   const expense = monthRows.filter(r=>r.type==='expense').reduce((s,r)=>s+parseFloat(r.amount||0),0);
   
+  // Month label
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('finMonthLabel').textContent = `📅 ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+  
   document.getElementById('finIncome').textContent = '$' + income.toLocaleString();
   document.getElementById('finExpense').textContent = '$' + expense.toLocaleString();
   const net = income - expense;
   const netEl = document.getElementById('finNet');
   netEl.textContent = (net >= 0 ? '+$' : '-$') + Math.abs(net).toLocaleString();
   netEl.style.color = net >= 0 ? 'var(--green)' : 'var(--red)';
+  
+  // All-time totals
+  const totalIncome = rows.filter(r=>r.type==='income').reduce((s,r)=>s+parseFloat(r.amount||0),0);
+  const totalExpense = rows.filter(r=>r.type==='expense').reduce((s,r)=>s+parseFloat(r.amount||0),0);
+  document.getElementById('finTotalIncome').textContent = '$' + totalIncome.toLocaleString();
+  document.getElementById('finTotalExpense').textContent = '$' + totalExpense.toLocaleString();
+  const totalNet = totalIncome - totalExpense;
+  const totalNetEl = document.getElementById('finTotalNet');
+  totalNetEl.textContent = (totalNet >= 0 ? '+$' : '-$') + Math.abs(totalNet).toLocaleString();
+  totalNetEl.style.color = totalNet >= 0 ? 'var(--green)' : 'var(--red)';
   
   // Pie chart
   renderPieChart(monthRows.filter(r=>r.type==='expense'));
