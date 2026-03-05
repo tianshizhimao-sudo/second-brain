@@ -512,26 +512,9 @@ a{color:var(--green);text-decoration:none}
 
   <div class="section-title">📅 Daily Logs</div>
   <div class="memory-section" id="dailyLogs">
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Daily</span><span class="date-tag">2026-02-18 (Wed)</span></div>
-      <div class="title">NAB Construction Deal + Site Fixes + Skills</div>
-      <div class="preview">NAB Construction Deal rework ($7.9M) — builder experience evidence + working capital. Gladstone Airport hangar leasehold research. Connective Rafael call. CTO site review: 13 tool pages OG tags + sitemap. Humanizer pass: 22 changes. 3 new skills installed.</div>
-    </div>
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Daily</span><span class="date-tag">2026-02-17 (Tue)</span></div>
-      <div class="title">CEO Advisor Report + n8n Onboarding</div>
-      <div class="preview">CEO Advisor 4-scenario report (800行). n8n Client Onboarding V2 workflow deployed (48 nodes). Skills: negotiation + ceo-advisor installed.</div>
-    </div>
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Daily</span><span class="date-tag">2026-02-16 (Mon) 除夕</span></div>
-      <div class="title">OneyTrader 18 Strategies + BMC + 除夕</div>
-      <div class="preview">除夕夜🧧！OneyTrader: 18策略42实例 + 5min interval. Business Model Canvas 完成. Cold Start 获客计划. LINE Sticker V1 上线🎉。</div>
-    </div>
-    <div class="memory-entry" onclick="this.classList.toggle('expanded')">
-      <div class="meta"><span class="tag">Daily</span><span class="date-tag">2026-02-15 (Sun)</span></div>
-      <div class="title">Security Repositioning 蓝海 + SEO Audit</div>
-      <div class="preview">重大战略: Oney Security 重新定位 — "Quickli = Serviceability, Oney = Security" 全球零竞品蓝海！全站 SEO: 14页 OG + JSON-LD + PNG→WebP. 3km PR 5:02/km。</div>
-    </div>
+    <div class="skeleton" style="width:90%"></div>
+    <div class="skeleton" style="width:70%"></div>
+    <div class="skeleton" style="width:80%"></div>
   </div>
 </div>
 
@@ -1238,7 +1221,41 @@ async function loadTabData(tab, force) {
     case 'reading': await loadReading(force); break;
     case 'goals': await loadGoals(force); break;
     case 'ideas': await loadIdeas(force); break;
+    case 'memory': await loadDailyLogs(force); break;
   }
+}
+
+// === Daily Logs (from Memory sheet) ===
+async function loadDailyLogs(force) {
+  if (DATA.Memory && !force) { renderDailyLogs(); return; }
+  const data = await API.get('Memory');
+  DATA.Memory = data?.rows || [];
+  renderDailyLogs();
+}
+
+function renderDailyLogs() {
+  const container = document.getElementById('dailyLogs');
+  const rows = (DATA.Memory || [])
+    .filter(r => r.category === 'Daily')
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+    .slice(0, 14);
+
+  if (!rows.length) {
+    container.innerHTML = '<div style="padding:16px;color:var(--text-secondary);text-align:center">No daily logs yet. Logs sync automatically each night.</div>';
+    return;
+  }
+
+  container.innerHTML = rows.map(r => {
+    const lines = (r.content || '').split('\n').filter(l => l.trim());
+    const preview = lines.slice(0, 3).join(' · ');
+    const full = lines.map(l => '• ' + l.replace(/^[-•]\s*/, '')).join('<br>');
+    return `<div class="memory-entry" onclick="this.classList.toggle('expanded')">
+      <div class="meta"><span class="tag">Daily</span><span class="date-tag">${r.date || ''}</span></div>
+      <div class="title">${r.title || r.date || 'Log'}</div>
+      <div class="preview">${preview}</div>
+      <div class="detail">${full}</div>
+    </div>`;
+  }).join('');
 }
 
 async function loadTodos() {
