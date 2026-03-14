@@ -80,11 +80,7 @@ a{color:var(--green);text-decoration:none}
 .countdown .info .name{font-size:14px;font-weight:600}
 .countdown .info .date{font-size:12px;color:var(--muted)}
 
-/* Activity */
-.activity-item{padding:10px 0;border-bottom:1px solid var(--border)}
-.activity-item:last-child{border:none}
-.activity-item .date{font-size:11px;color:var(--green);font-weight:600}
-.activity-item .desc{font-size:13px;margin-top:2px}
+
 
 /* Todo */
 .todo{padding:8px 0;display:flex;align-items:flex-start;gap:8px;border-bottom:1px solid var(--border)}
@@ -455,27 +451,9 @@ a{color:var(--green);text-decoration:none}
   <div class="section-title">⏳ Countdowns</div>
   <div class="card" style="margin-bottom:16px" id="countdowns"></div>
 
-  <div class="section-title">🕐 Recent Activity</div>
-  <div class="card" style="margin-bottom:16px" id="recentActivity">
-    <div class="activity-item"><div class="date">2026-02-18 (Wed)</div><div class="desc">NAB Construction Deal rework — builder experience + working capital analysis for $7.9M securities</div></div>
-    <div class="activity-item"><div class="date">2026-02-18</div><div class="desc">Connective Rafael follow-up call — aggregator comparison</div></div>
-    <div class="activity-item"><div class="date">2026-02-18</div><div class="desc">CTO completed full site review fixes: 13 tool pages OG tags, sitemap cleanup, 9.1MB unused PNGs removed</div></div>
-    <div class="activity-item"><div class="date">2026-02-18</div><div class="desc">Installed 3 new skills: Security Audit, Humanizer, News Aggregator</div></div>
-    <div class="activity-item"><div class="date">2026-02-17 (Tue)</div><div class="desc">CEO Advisor report completed — 4 scenarios (Aggregator/Finance/Q3 Strategy/Resignation)</div></div>
-    <div class="activity-item"><div class="date">2026-02-17</div><div class="desc">n8n Client Onboarding Workflow V2 deployed — Calendly→Sheets→Gmail→Telegram</div></div>
-    <div class="activity-item"><div class="date">2026-02-16 (Mon)</div><div class="desc">OneyTrader: 18 strategies, 42 instances live on IBKR</div></div>
-    <div class="activity-item"><div class="date">2026-02-16</div><div class="desc">除夕夜 🧧 — Business Model Canvas + Cold Start Plan completed</div></div>
-  </div>
-
-  <div class="section-title">📝 Action Items <button class="add-btn" onclick="openForm('todo')">➕ Add</button></div>
+  <div class="section-title">📝 Todos <button class="add-btn" onclick="openForm('todo')">➕ Add</button></div>
   <div class="card" id="todosContainer">
-    <div class="todo"><span class="check">○</span><div class="text">Connective Rafael — confirm commission split, trail ownership, commercial panel, clawback</div></div>
-    <div class="todo"><span class="check">○</span><div class="text">Cert IV — send RPL email to Stuart (Kaplan $380)</div></div>
-    <div class="todo"><span class="check">○</span><div class="text">Oney Analyse — decide deployment (tools sub-path vs standalone repo)</div></div>
-    <div class="todo"><span class="check">○</span><div class="text">Oney Security v1.8.3 — continue polishing, then deploy</div></div>
-    <div class="todo"><span class="check">○</span><div class="text">Twenty CRM — migrate from Google Sheets</div></div>
-    <div class="todo"><span class="check done">✓</span><div class="text">Humanizer pass — 22 changes across all site pages</div></div>
-    <div class="todo"><span class="check done">✓</span><div class="text">Site review fixes — OG tags, canonical URLs, sitemap</div></div>
+    <div style="color:var(--muted);font-size:13px;text-align:center;padding:12px">Loading...</div>
   </div>
 </div>
 
